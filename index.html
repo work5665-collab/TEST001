@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스마트 프로젝트 빌더 v5.1</title>
+    <title>스마트 프로젝트 빌더 v5.2</title>
     <style>
         :root {
             --primary: #1e40af;
@@ -14,50 +14,63 @@
             --text: #1e293b;
         }
 
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 750px; margin: 0 auto; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; }
 
         .progress-container { width: 100%; height: 6px; background: #e2e8f0; border-radius: 10px; margin-bottom: 40px; }
         .progress-bar { height: 100%; background: var(--primary); border-radius: 10px; width: 16.6%; transition: 0.3s; }
         .step-count { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 10px; display: block; }
 
-        header { margin-bottom: 30px; }
-        h1 { font-size: 24px; margin: 0; letter-spacing: -1px; }
-
         .step-section { display: none; }
         .step-section.active { display: block; animation: fadeIn 0.4s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .q-label { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: block; }
-        .category-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .cat-btn { padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; text-align: center; font-weight: 600; transition: 0.2s; }
+        .q-label { font-size: 22px; font-weight: 800; margin-bottom: 25px; display: block; color: var(--primary); }
+        .category-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .cat-btn { padding: 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; text-align: center; font-weight: 600; transition: 0.2s; background: #fff; }
+        .cat-btn:hover { border-color: var(--accent); }
         .cat-btn.selected { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
 
-        select, input, textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 15px; box-sizing: border-box; margin-top: 10px; }
+        select, input, textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 15px; box-sizing: border-box; margin-top: 10px; transition: 0.2s; }
+        select:focus, input:focus { border-color: var(--primary); outline: none; }
 
-        .spec-builder { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-top: 15px; }
-        .spec-row { display: grid; grid-template-columns: 1.2fr 0.8fr 1.5fr 1fr 60px; gap: 8px; margin-bottom: 10px; }
-        .spec-row select, .spec-row input { padding: 10px; font-size: 13px; margin: 0; }
-        .added-table { width: 100%; border-collapse: collapse; background: white; margin-top: 10px; font-size: 13px; }
-        .added-table th, .added-table td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; }
+        /* 타겟 조합 스타일 */
+        .tag-pool { display: flex; flex-wrap: wrap; gap: 8px; background: #f1f5f9; padding: 20px; border-radius: 15px; }
+        .tag { padding: 8px 16px; background: #fff; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .tag.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-        .nav-btns { margin-top: 40px; display: flex; gap: 10px; }
+        /* 플랫폼 레이아웃 수정 */
+        .platform-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 20px; }
+        .pf-card { display: flex; align-items: center; gap: 10px; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; background: #fff; }
+        .pf-card input { width: auto; margin: 0; }
+        .pf-card.checked { border-color: var(--primary); background: #f0f7ff; }
+
+        /* 규격 빌더 레이아웃 수정 */
+        .spec-builder { background: #f8fafc; padding: 25px; border-radius: 15px; border: 1px solid var(--border); margin-top: 15px; }
+        .spec-inputs { display: grid; grid-template-columns: 1fr 0.8fr 1.2fr 1fr 1fr 50px; gap: 10px; align-items: end; }
+        .spec-inputs label { font-size: 12px; color: #64748b; font-weight: 700; margin-bottom: 5px; display: block; }
+        .spec-inputs input, .spec-inputs select { margin-top: 0; padding: 12px; font-size: 13px; }
+        
+        .added-table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; font-size: 13px; border-radius: 10px; overflow: hidden; }
+        .added-table th { background: #f1f5f9; padding: 12px; border-bottom: 2px solid var(--border); }
+        .added-table td { padding: 12px; border-bottom: 1px solid var(--border); text-align: center; }
+
+        .nav-btns { margin-top: 40px; display: flex; gap: 12px; }
         .btn-prev { background: #e2e8f0; color: #475569; width: 100px; }
         .btn-next { background: var(--primary); color: white; flex: 1; }
-        button { padding: 16px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; }
-
-        .platform-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
-        .pf-item { display: flex; align-items: center; gap: 8px; font-size: 14px; background: #fff; padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
+        button { padding: 18px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
 
         #resultView { display: none; }
-        .final-box { border: 2px solid var(--primary); padding: 30px; border-radius: 20px; }
-        .final-sentence { font-size: 19px; line-height: 1.8; margin-bottom: 25px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
-        .final-sentence b { color: var(--primary); background: #eff6ff; padding: 0 4px; }
+        .final-box { border: 2px solid var(--primary); padding: 35px; border-radius: 24px; background: #fff; }
+        .final-sentence { font-size: 20px; line-height: 1.8; margin-bottom: 30px; }
+        .final-sentence b { color: var(--primary); text-decoration: underline; }
         .res-table { width: 100%; border-collapse: collapse; }
-        .res-table th, .res-table td { padding: 12px; border: 1px solid #e2e8f0; text-align: left; }
-        .res-table th { background: #f8fafc; width: 160px; }
+        .res-table th, .res-table td { padding: 15px; border: 1px solid #e2e8f0; text-align: left; }
+        .res-table th { background: #f8fafc; width: 160px; color: #64748b; }
 
         @media print { .no-print { display: none; } }
+        @media (max-width: 600px) { .spec-inputs { grid-template-columns: 1fr 1fr; } }
     </style>
 </head>
 <body>
@@ -69,82 +82,96 @@
     <div id="formView">
         <div class="step-section active" data-step="1">
             <span class="q-label">프로젝트의 이름을 알려주세요</span>
-            <input type="text" id="brandName" placeholder="제품명이나 프로젝트명을 입력하세요">
-            <div style="margin-top:20px;">
-                <label>어떤 종류의 제작물인가요?</label>
+            <input type="text" id="brandName" placeholder="예: 2026 하반기 브랜드 필름">
+            <div style="margin-top:25px;">
+                <label style="font-weight:700;">제작 유형</label>
                 <select id="contentType">
                     <option value="브랜드 홍보 영상">홍보 영상 (브랜드 필름, TVCF 등)</option>
-                    <option value="디지털 캠페인">디지털 광고 소재 (SNS 이미지/영상)</option>
-                    <option value="IR/투자 유치">비즈니스 프레젠테이션 (IR/Pitch)</option>
-                    <option value="전시/오프라인">전시 및 매장용 디스플레이 콘텐츠</option>
+                    <option value="디지털 광고">디지털 광고 소재 (SNS 이미지/영상)</option>
+                    <option value="전시/매장 콘텐츠">전시 및 매장용 디스플레이 콘텐츠</option>
+                    <option value="IR/Pitch">비즈니스 프레젠테이션 (IR 자료)</option>
                 </select>
             </div>
         </div>
 
         <div class="step-section" data-step="2">
-            <span class="q-label">우리 제품의 핵심 강점(USP)은 무엇인가요?</span>
+            <span class="q-label">우리 제품의 핵심 강점을 선택해 주세요</span>
             <div class="category-group">
-                <div class="cat-btn" onclick="selectUSP('성능/기술', ['압도적인 기술력', '특허받은 기능', '오랜 연구 노하우'])">성능/기술</div>
-                <div class="cat-btn" onclick="selectUSP('감성/디자인', ['세련된 디자인', '독보적인 분위기', '인체공학적 설계'])">감성/디자인</div>
-                <div class="cat-btn" onclick="selectUSP('경제성/효율', ['합리적인 가격', '최고의 가성비', '시간/비용 절감'])">경제성/효율</div>
-                <div class="cat-btn" onclick="selectUSP('신뢰/안정', ['철저한 사후관리', '안전한 성분', '공인된 기관 인증'])">신뢰/안정</div>
+                <div class="cat-btn" onclick="selectUSP('성능', ['독보적 기술력', '압도적 성능', '내구성/안정성'])">성능/기술</div>
+                <div class="cat-btn" onclick="selectUSP('디자인', ['세련된 외관', '트렌디한 감성', '미니멀 디자인'])">디자인/감성</div>
+                <div class="cat-btn" onclick="selectUSP('가격', ['합리적 가격', '극강의 가성비', '유지비 절감'])">가격/경제성</div>
             </div>
             <select id="uspDetail" style="display:none;"></select>
-            <input type="text" id="uspCustom" placeholder="직접 입력하여 구체화할 수 있습니다" style="margin-top:10px;">
+            <input type="text" id="uspCustom" placeholder="위 항목에 없으면 직접 입력해 주세요" style="margin-top:15px;">
         </div>
 
         <div class="step-section" data-step="3">
-            <span class="q-label">무엇을 위해, 어떤 결과를 얻고 싶으신가요?</span>
+            <span class="q-label">이번 프로젝트를 통해 얻고 싶은 성과는?</span>
             <div class="category-group">
-                <div class="cat-btn" onclick="selectGoal('인지도 확산', ['대중적 브랜드 인식 제고', 'SNS 바이럴 형성', '초기 시장 안착'])">인지도 확산</div>
-                <div class="cat-btn" onclick="selectGoal('구매/행동 유도', ['직접 매출 증대', '신규 회원가입 유도', '오프라인 매장 방문'])">구매/행동 유도</div>
-                <div class="cat-btn" onclick="selectGoal('신뢰 확보', ['전문성 강조', '투자 유치 및 파트너십', '고객 충성도 강화'])">신뢰 확보</div>
+                <div class="cat-btn" onclick="selectGoal('인지도', ['브랜드 존재감 각인', '신규 고객 확보', '바이럴 형성'])">인지도 확산</div>
+                <div class="cat-btn" onclick="selectGoal('세일즈', ['직접 매출 증대', '상담 신청 유도', '재구매율 상승'])">판매/행동 유도</div>
+                <div class="cat-btn" onclick="selectGoal('이미지', ['전문성 신뢰 확보', '이미지 쇄신', '기업 가치 상승'])">이미지/신뢰</div>
             </div>
             <select id="goalDetail" style="display:none;"></select>
         </div>
 
         <div class="step-section" data-step="4">
-            <span class="q-label">어떤 분들에게 이 메시지를 전달할까요?</span>
-            <div class="category-group">
-                <div class="cat-btn" onclick="selectTarget('연령대', ['2030 트렌드 세터', '3040 핵심 경제층', '전 연령대 타겟'])">연령대 기준</div>
-                <div class="cat-btn" onclick="selectTarget('관심사', ['재테크/비즈니스', '육아/가족', '자기계발/운동', '기술/얼리어답터'])">관심사 기준</div>
+            <span class="q-label">누구에게 보여줄까요? (중복 선택)</span>
+            <div style="margin-bottom:10px; font-weight:700; font-size:14px; color:var(--accent);">연령대</div>
+            <div class="tag-pool" id="ageTags">
+                <div class="tag" onclick="toggleTag(this)">10대</div><div class="tag" onclick="toggleTag(this)">20대</div>
+                <div class="tag" onclick="toggleTag(this)">30대</div><div class="tag" onclick="toggleTag(this)">40대</div>
+                <div class="tag" onclick="toggleTag(this)">50대 이상</div>
             </div>
-            <select id="targetDetail" style="display:none;"></select>
+            <div style="margin:20px 0 10px; font-weight:700; font-size:14px; color:var(--accent);">라이프스타일/특성</div>
+            <div class="tag-pool" id="lifeTags">
+                <div class="tag" onclick="toggleTag(this)">직장인</div><div class="tag" onclick="toggleTag(this)">취준생/학생</div>
+                <div class="tag" onclick="toggleTag(this)">육아 맘/대디</div><div class="tag" onclick="toggleTag(this)">자기계발족</div>
+                <div class="tag" onclick="toggleTag(this)">얼리어답터</div><div class="tag" onclick="toggleTag(this)">실속형 소비자</div>
+            </div>
         </div>
 
         <div class="step-section" data-step="5">
-            <span class="q-label">원하시는 영상의 분위기(톤앤매너)는?</span>
+            <span class="q-label">원하는 영상의 전반적인 분위기는?</span>
             <div class="category-group">
-                <div class="cat-btn" onclick="selectTone('시각적 감도', ['시네마틱한 (영화 같은)', '미니멀한 (깔끔한)', '비비드한 (강렬한)'])">시각적 감도</div>
-                <div class="cat-btn" onclick="selectTone('전달 방식', ['신뢰감 있는 (차분한)', '활기찬 (빠른 리듬)', '감성적인 (따뜻한)'])">전달 방식</div>
+                <div class="cat-btn" onclick="selectTone('비주얼', ['영화 같은(시네마틱)', '깔끔한(미니멀)', '화려한(비비드)'])">시각적 스타일</div>
+                <div class="cat-btn" onclick="selectTone('속도감', ['빠르고 경쾌한', '차분하고 진중한', '감성적이고 따뜻한'])">전달 호흡</div>
             </div>
             <select id="toneDetail" style="display:none;"></select>
         </div>
 
         <div class="step-section" data-step="6">
-            <span class="q-label">송출 플랫폼과 세부 규격을 설정합니다</span>
-            <div class="platform-grid">
-                <label class="pf-item"><input type="checkbox" name="pf" value="유튜브"> 유튜브</label>
-                <label class="pf-item"><input type="checkbox" name="pf" value="인스타그램/틱톡"> SNS(릴스/쇼츠)</label>
-                <label class="pf-item"><input type="checkbox" name="pf" value="TV 광고"> TV 광고</label>
-                <label class="pf-item"><input type="checkbox" name="pf" value="매장 외부/전광판"> 외부 디스플레이</label>
-                <label class="pf-item"><input type="checkbox" name="pf" value="웹사이트/홈페이지"> 공식 홈페이지</label>
-                <label class="pf-item"><input type="checkbox" name="pf" value="전시/박람회"> 전시/박람회</label>
+            <span class="q-label">어디에 송출하며, 스펙은 어떻게 할까요?</span>
+            <div class="platform-container" id="pfContainer">
+                <div class="pf-card" onclick="togglePF(this)"><input type="checkbox" value="유튜브"> 유튜브</div>
+                <div class="pf-card" onclick="togglePF(this)"><input type="checkbox" value="인스타그램/릴스"> 릴스/쇼츠</div>
+                <div class="pf-card" onclick="togglePF(this)"><input type="checkbox" value="TV 광고"> TV 광고</div>
+                <div class="pf-card" onclick="togglePF(this)"><input type="checkbox" value="매장 외부 전광판"> 외부 전광판</div>
+                <div class="pf-card" onclick="togglePF(this)"><input type="checkbox" value="전시/박람회"> 전시/박람회</div>
+                <div class="pf-card" onclick="togglePF(this)"><input type="checkbox" value="공식 홈페이지"> 홈페이지</div>
             </div>
+
             <div class="spec-builder">
-                <div class="spec-row">
-                    <input type="text" id="sDur" placeholder="분량(예: 30초)">
-                    <input type="number" id="sQty" placeholder="수량">
-                    <select id="sRatio">
-                        <option value="16:9 (가로형/TV/유튜브)">16:9 (가로형)</option>
-                        <option value="9:16 (세로형/숏폼)">9:16 (세로형)</option>
-                        <option value="1:1 (정방형/SNS)">1:1 (정방형)</option>
-                    </select>
-                    <select id="sRes"><option value="4K">4K</option><option value="FHD">FHD</option></select>
-                    <button type="button" onclick="addSpec()" style="background:var(--primary); color:white; border-radius:8px;">+</button>
+                <div class="spec-inputs">
+                    <div><label>분량(숫자)</label><input type="number" id="sDur" placeholder="예: 30"></div>
+                    <div><label>단위</label><select id="sUnit"><option value="초">초</option><option value="분">분</option></select></div>
+                    <div><label>비율</label><select id="sRatio">
+                        <option value="16:9 (가로형)">16:9 (가로형)</option>
+                        <option value="9:16 (세로형)">9:16 (세로형)</option>
+                        <option value="1:1 (정방형)">1:1 (정방형)</option>
+                    </select></div>
+                    <div><label>해상도</label><select id="sRes">
+                        <option value="4K">4K</option><option value="FHD">FHD</option><option value="720p">720p</option>
+                    </select></div>
+                    <div><label>프레임</label><select id="sFps">
+                        <option value="24fps">24fps</option><option value="30fps" selected>30fps</option><option value="60fps">60fps</option>
+                    </select></div>
+                    <button type="button" onclick="addSpec()" style="background:var(--primary); color:white; padding:10px;">+</button>
                 </div>
+                <input type="number" id="sQty" placeholder="수량(개)" style="width:100px; margin-top:10px;">
+                
                 <table class="added-table" id="specTable" style="display:none;">
-                    <thead><tr><th>분량</th><th>수량</th><th>비율</th><th>해상도</th><th>-</th></tr></thead>
+                    <thead><tr><th>분량</th><th>비율</th><th>해상도</th><th>프레임</th><th>수량</th><th>-</th></tr></thead>
                     <tbody id="specBody"></tbody>
                 </table>
             </div>
@@ -157,14 +184,14 @@
     </div>
 
     <div id="resultView">
-        <header><h1>프로젝트 전략 정의서</h1></header>
+        <header><h1>PROJECT DEFINITION</h1></header>
         <div class="final-box">
             <div class="final-sentence" id="resSentence"></div>
             <table class="res-table" id="resTable"></table>
         </div>
         <div class="nav-btns no-print">
-            <button class="btn-next" onclick="window.print()">PDF로 저장</button>
-            <button class="btn-prev" onclick="location.reload()">수정하기</button>
+            <button class="btn-next" onclick="window.print()">정의서 PDF 저장</button>
+            <button class="btn-prev" onclick="location.reload()">수정</button>
         </div>
     </div>
 </div>
@@ -172,19 +199,13 @@
 <script>
     let step = 1;
     let specs = [];
-    let selectedData = { 
-        uspCat: '', uspSub: '', 
-        goalCat: '', goalSub: '', 
-        targetCat: '', targetSub: '',
-        toneCat: '', toneSub: ''
-    };
+    let selectedData = { uspCat: '', uspSub: '', goalCat: '', goalSub: '', toneCat: '', toneSub: '' };
 
     function moveStep(n) {
-        if(n === 1 && step === 1 && !document.getElementById('brandName').value) return alert("프로젝트 이름을 입력해 주세요!");
+        if(n === 1 && step === 1 && !document.getElementById('brandName').value) return alert("프로젝트 이름을 입력하세요!");
         
         document.querySelector(`[data-step="${step}"]`).classList.remove('active');
         step += n;
-        
         if(step > 6) return showResult();
 
         document.querySelector(`[data-step="${step}"]`).classList.add('active');
@@ -194,29 +215,10 @@
         document.getElementById('nextBtn').innerText = step === 6 ? '정의서 완성' : '다음으로';
     }
 
-    function selectUSP(cat, subs) {
-        selectedData.uspCat = cat;
-        renderSub('uspDetail', subs, (v) => selectedData.uspSub = v);
-        highlightBtn(2, cat);
-    }
-
-    function selectGoal(cat, subs) {
-        selectedData.goalCat = cat;
-        renderSub('goalDetail', subs, (v) => selectedData.goalSub = v);
-        highlightBtn(3, cat);
-    }
-
-    function selectTarget(cat, subs) {
-        selectedData.targetCat = cat;
-        renderSub('targetDetail', subs, (v) => selectedData.targetSub = v);
-        highlightBtn(4, cat);
-    }
-
-    function selectTone(cat, subs) {
-        selectedData.toneCat = cat;
-        renderSub('toneDetail', subs, (v) => selectedData.toneSub = v);
-        highlightBtn(5, cat);
-    }
+    // 트리형 선택 함수들
+    function selectUSP(cat, subs) { selectedData.uspCat = cat; renderSub('uspDetail', subs, (v) => selectedData.uspSub = v); highlightBtn(2, cat); }
+    function selectGoal(cat, subs) { selectedData.goalCat = cat; renderSub('goalDetail', subs, (v) => selectedData.goalSub = v); highlightBtn(3, cat); }
+    function selectTone(cat, subs) { selectedData.toneCat = cat; renderSub('toneDetail', subs, (v) => selectedData.toneSub = v); highlightBtn(5, cat); }
 
     function renderSub(id, list, callback) {
         const el = document.getElementById(id);
@@ -226,27 +228,40 @@
         el.onchange = (e) => callback(e.target.value);
     }
 
-    function highlightBtn(stepNum, text) {
-        const section = document.querySelector(`[data-step="${stepNum}"]`);
-        const btns = section.querySelectorAll('.cat-btn');
+    function highlightBtn(sNum, text) {
+        const btns = document.querySelector(`[data-step="${sNum}"]`).querySelectorAll('.cat-btn');
         btns.forEach(b => b.classList.toggle('selected', b.innerText === text));
     }
 
+    // 타겟 태그 토글
+    function toggleTag(el) { el.classList.toggle('active'); }
+
+    // 플랫폼 카드 토글
+    function togglePF(el) {
+        const cb = el.querySelector('input');
+        cb.checked = !cb.checked;
+        el.classList.toggle('checked', cb.checked);
+    }
+
+    // 스펙 추가
     function addSpec() {
         const d = document.getElementById('sDur').value;
-        const q = document.getElementById('sQty').value;
+        const u = document.getElementById('sUnit').value;
         const r = document.getElementById('sRatio').value;
         const s = document.getElementById('sRes').value;
-        if(!d || !q) return alert("분량과 수량을 입력해 주세요.");
-        specs.push({d, q, r, s});
+        const f = document.getElementById('sFps').value;
+        const q = document.getElementById('sQty').value || 1;
+        if(!d) return alert("분량을 입력하세요");
+        specs.push({d: d+u, r, s, f, q});
         renderSpecList();
-        document.getElementById('sDur').value=''; document.getElementById('sQty').value='';
+        document.getElementById('sDur').value = '';
     }
 
     function renderSpecList() {
         document.getElementById('specTable').style.display = 'table';
         document.getElementById('specBody').innerHTML = specs.map((x, i) => `
-            <tr><td>${x.d}</td><td>${x.q}개</td><td>${x.r}</td><td>${x.s}</td><td onclick="specs.splice(${i},1);renderSpecList();" style="color:red;cursor:pointer;">×</td></tr>
+            <tr><td>${x.d}</td><td>${x.r}</td><td>${x.s}</td><td>${x.f}</td><td>${x.q}개</td>
+            <td onclick="specs.splice(${i},1);renderSpecList();" style="color:red;cursor:pointer;">×</td></tr>
         `).join('');
     }
 
@@ -255,23 +270,22 @@
         document.getElementById('resultView').style.display = 'block';
         
         const brand = document.getElementById('brandName').value;
+        const targetTags = Array.from(document.querySelectorAll('.tag.active')).map(t => t.innerText).join(', ');
+        const platforms = Array.from(document.querySelectorAll('.pf-card input:checked')).map(p => p.value).join(', ');
         const usp = document.getElementById('uspCustom').value || selectedData.uspSub;
-        const platforms = Array.from(document.querySelectorAll('input[name="pf"]:checked')).map(p => p.value).join(', ');
 
         document.getElementById('resSentence').innerHTML = `
-            <b>${brand}</b> 프로젝트는 <b>${selectedData.targetSub}</b>을(를) 대상으로, <b>"${usp}"</b>라는 핵심 가치를 <b>${selectedData.toneSub}</b> 분위기로 전달하고자 합니다. 
-            궁극적으로 <b>${selectedData.goalSub}</b> 성과를 거두는 것이 본 프로젝트의 정의입니다.
+            <b>${brand}</b>은(는) <b>${targetTags || '전 고객'}</b> 타겟에게 <b>"${usp}"</b>를 핵심 가치로 전달하는 <b>${document.getElementById('contentType').value}</b> 프로젝트입니다. 
+            <b>${selectedData.toneSub}</b> 무드로 기획하여 <b>${selectedData.goalSub}</b> 목표를 달성하고자 합니다.
         `;
 
-        const finalFields = [
-            {l: '제작 유형', v: document.getElementById('contentType').value},
-            {l: '전략 키워드(USP)', v: usp},
-            {l: '톤앤매너', v: selectedData.toneSub},
-            {l: '노출 플랫폼', v: platforms || '미선택'},
-            {l: '제작 규격', v: specs.map(s => `${s.d} / ${s.q}개 (${s.r})`).join('<br>') || '입력된 규격 없음'}
+        const rows = [
+            {l: '전략 키워드', v: usp},
+            {l: '핵심 타겟', v: targetTags || '미지정'},
+            {l: '송출 플랫폼', v: platforms || '미지정'},
+            {l: '제작 상세 스펙', v: specs.map(s => `${s.d} | ${s.r} | ${s.s} | ${s.f} | ${s.q}개`).join('<br>') || '입력 없음'}
         ];
-
-        document.getElementById('resTable').innerHTML = finalFields.map(f => `<tr><th>${f.l}</th><td>${f.v}</td></tr>`).join('');
+        document.getElementById('resTable').innerHTML = rows.map(r => `<tr><th>${r.l}</th><td>${r.v}</td></tr>`).join('');
     }
 </script>
 </body>
