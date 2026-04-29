@@ -3,47 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로젝트 전략 빌더 v7.4</title>
+    <title>프로젝트 전략 빌더 v7.5</title>
     <style>
-        :root { --primary: #1e3a8a; --secondary: #334155; --bg: #f8fafc; --card: #ffffff; --border: #cbd5e1; }
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: auto; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+        :root { --primary: #1e3a8a; --secondary: #334155; --bg: #f1f5f9; --card: #ffffff; --border: #cbd5e1; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 900px; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
 
         .step-nav { display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 10px; }
-        .nav-dot { padding: 8px 16px; background: #fff; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
-        .nav-dot.active { background: var(--primary); color: white; }
+        .nav-dot { padding: 8px 16px; background: #fff; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: 0.3s; }
+        .nav-dot.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        .q-label { font-size: 24px; font-weight: 900; margin-bottom: 5px; color: var(--primary); display: block; }
-        .item-label { font-weight: 800; font-size: 14px; margin-top: 25px; display: block; color: var(--secondary); border-left: 4px solid var(--primary); padding-left: 10px; margin-bottom: 10px; }
+        .progress-bar-container { height: 6px; background: #e2e8f0; border-radius: 10px; margin-bottom: 30px; }
+        .progress-bar { height: 100%; background: var(--primary); width: 14%; border-radius: 10px; transition: 0.5s; }
 
-        .btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 15px; }
-        .sel-btn { padding: 15px; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; text-align: center; font-weight: 700; font-size: 13px; background: #fff; }
-        .sel-btn.active { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+        .step-section { display: none; min-height: 400px; }
+        .step-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        select, input { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; box-sizing: border-box; }
-        
-        .spec-box { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-top: 20px; }
-        .spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; align-items: end; }
+        .q-label { font-size: 26px; font-weight: 900; margin-bottom: 8px; display: block; color: var(--primary); }
+        .item-label { font-weight: 800; font-size: 15px; margin-top: 25px; display: block; color: var(--secondary); border-left: 5px solid var(--primary); padding-left: 12px; margin-bottom: 15px; }
 
-        .added-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; background: white; border-radius: 10px; overflow: hidden; }
-        .added-table th { background: #f8fafc; padding: 12px; border-bottom: 2px solid var(--border); }
-        .added-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
+        .btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+        .sel-btn { padding: 18px; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; text-align: center; font-weight: 700; font-size: 14px; background: #fff; transition: 0.2s; }
+        .sel-btn.active { border-color: var(--primary); background: #eff6ff; color: var(--primary); box-shadow: 0 4px 12px rgba(30,58,138,0.1); }
 
-        .edit-num { color: var(--primary); font-weight: 900; cursor: pointer; border-bottom: 1px dashed var(--primary); padding: 2px 5px; }
-        .unit-toggle { cursor: pointer; color: #ef4444; font-weight: bold; }
-        .edit-select { padding: 4px; border-radius: 5px; border: 1px solid var(--primary); }
+        select, input { width: 100%; padding: 15px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; margin-top: 5px; }
 
-        .nav-btns { margin-top: 40px; display: flex; gap: 10px; }
-        .btn-prev { background: #e2e8f0; color: #475569; width: 100px; font-weight: 800; }
-        .btn-next { background: var(--primary); color: white; flex: 1; font-weight: 800; }
-        button { padding: 18px; border-radius: 12px; border: none; cursor: pointer; }
+        .spec-box { background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-top: 20px; }
+        .spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; align-items: end; }
+
+        .added-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+        .added-table th { background: #f1f5f9; padding: 12px; font-size: 12px; color: #64748b; }
+        .added-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; text-align: center; }
+        .inline-edit { width: 60px; padding: 5px; border: 1px solid var(--border); border-radius: 5px; text-align: center; font-weight: 800; color: var(--primary); }
+        .unit-btn { padding: 5px 10px; background: #e2e8f0; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 900; }
+
+        .nav-btns { margin-top: 40px; display: flex; gap: 15px; }
+        .btn-prev { background: #e2e8f0; color: #475569; width: 120px; font-weight: 800; }
+        .btn-next { background: var(--primary); color: white; flex: 1; font-weight: 800; font-size: 17px; }
+        button { padding: 20px; border-radius: 15px; border: none; cursor: pointer; transition: 0.2s; }
+        button:hover { filter: brightness(1.1); }
 
         #resultView { display: none; }
-        .final-box { border: 2px solid var(--primary); padding: 35px; border-radius: 24px; background: #fff; }
-        .res-sentence { font-size: 18px; line-height: 1.8; margin-bottom: 30px; border-bottom: 2px solid var(--primary); padding-bottom: 25px; }
-        .res-table { width: 100%; border-collapse: collapse; }
-        .res-table th { background: #f8fafc; width: 150px; text-align: left; padding: 15px; border: 1px solid var(--border); font-size: 13px; }
-        .res-table td { padding: 15px; border: 1px solid var(--border); font-size: 14px; font-weight: 700; }
+        .final-card { border: 3px solid var(--primary); padding: 40px; border-radius: 30px; background: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+        .res-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .res-table th { background: #f8fafc; width: 160px; text-align: left; padding: 15px; border: 1px solid var(--border); font-size: 14px; color: #475569; }
+        .res-table td { padding: 15px; border: 1px solid var(--border); font-size: 15px; font-weight: 700; color: #1e293b; }
+
+        @media print { .no-print { display: none; } .container { box-shadow: none; padding: 0; } }
     </style>
 </head>
 <body>
@@ -51,149 +58,128 @@
 <div class="container">
     <div class="step-nav no-print">
         <div class="nav-dot active" onclick="goToStep(1)">1.상품</div>
-        <div class="nav-dot" onclick="goToStep(2)">2.제작종류</div>
-        <div class="nav-dot" onclick="goToStep(3)">3.가치전략</div>
-        <div class="nav-dot" onclick="goToStep(4)">4.성과목표</div>
-        <div class="nav-dot" onclick="goToStep(5)">5.타겟분석</div>
-        <div class="nav-dot" onclick="goToStep(6)">6.톤앤매너</div>
-        <div class="nav-dot" onclick="goToStep(7)">7.상세규격</div>
+        <div class="nav-dot" onclick="goToStep(2)">2.제작물</div>
+        <div class="nav-dot" onclick="goToStep(3)">3.가치</div>
+        <div class="nav-dot" onclick="goToStep(4)">4.목표</div>
+        <div class="nav-dot" onclick="goToStep(5)">5.타겟</div>
+        <div class="nav-dot" onclick="goToStep(6)">6.분위기</div>
+        <div class="nav-dot" onclick="goToStep(7)">7.사양/상태</div>
+    </div>
+
+    <div class="progress-bar-container no-print">
+        <div class="progress-bar" id="progressBar"></div>
     </div>
 
     <div id="formView">
         <div class="step-section active" data-step="1">
-            <span class="q-label">어떤 상품을 위한 기획인가요?</span>
+            <span class="q-label">어떤 상품을 알리고 싶으신가요?</span>
             <input type="text" id="brandName" placeholder="예: 프리미엄 올리브 통조림">
         </div>
 
         <div class="step-section" data-step="2">
             <span class="q-label">무엇을 제작하려고 하시나요?</span>
             <div class="btn-grid">
-                <div class="sel-btn" onclick="setBtnSel('projectType', this)">홍보 영상 광고</div>
-                <div class="sel-btn" onclick="setBtnSel('projectType', this)">브랜드 디자인/BI</div>
+                <div class="sel-btn" onclick="setBtnSel('projectType', this)">홍보 영상</div>
+                <div class="sel-btn" onclick="setBtnSel('projectType', this)">브랜드 디자인</div>
                 <div class="sel-btn" onclick="setBtnSel('projectType', this)">카탈로그/인쇄물</div>
-                <div class="sel-btn" onclick="setBtnSel('projectType', this)">랜딩페이지/UI</div>
                 <div class="sel-btn" onclick="setBtnSel('projectType', this, true)">직접 입력</div>
             </div>
-            <input type="text" id="projectTypeCustom" style="display:none;" placeholder="제작물 종류 직접 입력">
+            <input type="text" id="projectTypeCustom" style="display:none;" placeholder="제작물 종류를 직접 적어주세요">
         </div>
 
         <div class="step-section" data-step="3">
-            <span class="q-label">상품의 핵심 가치는 어디에 있나요?</span>
-            <span class="item-label">가치 대분류</span>
+            <span class="q-label">상품의 핵심 가치는 무엇인가요?</span>
+            <span class="item-label">전략 분류</span>
             <div class="btn-grid">
-                <div class="sel-btn" onclick="selectUSP('기술력/성능', ['독보적 원천기술', '내구성 및 안정성', '사용자 편의 혁신'])">기술력/성능</div>
-                <div class="sel-btn" onclick="selectUSP('경제성', ['혁신적 가성비', '유지관리비용 절감', '높은 재판매 가치'])">경제성</div>
-                <div class="sel-btn" onclick="selectUSP('심미성/디자인', ['하이엔드 감성', '미니멀리즘 스타일', '트렌디한 비주얼'])">심미성/디자인</div>
+                <div class="sel-btn" onclick="selectUSP('기술/성능', ['압도적인 품질', '사용자 편의성'])">기술/성능</div>
+                <div class="sel-btn" onclick="selectUSP('경제성', ['합리적인 가성비', '유지비 절감'])">경제성</div>
+                <div class="sel-btn" onclick="selectUSP('감성/디자인', ['하이엔드 감성', '트렌디한 비주얼'])">감성/디자인</div>
                 <div class="sel-btn" onclick="setBtnSel('usp', this, true)">직접 입력</div>
             </div>
-            <select id="uspDetail" style="display:none;"></select>
-            <input type="text" id="uspCustom" style="display:none;" placeholder="가치 직접 입력">
+            <select id="uspDetail" style="display:none; margin-top:10px;"></select>
+            <input type="text" id="uspCustom" style="display:none;" placeholder="가치를 직접 적어주세요">
         </div>
 
         <div class="step-section" data-step="4">
-            <span class="q-label">이 프로젝트의 최종 목적지는 어디인가요?</span>
-            <span class="item-label">비즈니스 목표 분류</span>
+            <span class="q-label">이 프로젝트의 최종 목표는?</span>
             <div class="btn-grid">
-                <div class="sel-btn" onclick="selectGoal('퍼포먼스 마케팅', ['구매 전환율 증대', '상담 및 리드 확보', '장바구니 전환'])">퍼포먼스(세일즈)</div>
-                <div class="sel-btn" onclick="selectGoal('브랜딩/인지도', ['브랜드 검색량 증대', '바이럴 지수 확보', '시장 선점 효과'])">브랜딩(인지도)</div>
-                <div class="sel-btn" onclick="selectGoal('교육/정보전달', ['사용법 완벽 숙지', '투자 유치(IR) 성공', '내부 임직원 가치 공유'])">교육/정보전달</div>
+                <div class="sel-btn" onclick="selectGoal('퍼포먼스', ['구매 전환율 증대', '상담 건수 확보'])">퍼포먼스(세일즈)</div>
+                <div class="sel-btn" onclick="selectGoal('브랜딩', ['브랜드 인지도 확산', '검색량 증대'])">브랜딩(인지도)</div>
+                <div class="sel-btn" onclick="setBtnSel('goal', this, true)">직접 입력</div>
             </div>
-            <select id="goalDetail" style="display:none;"></select>
-            <input type="text" id="goalCustom" style="display:none;" placeholder="목표 구체적 입력">
+            <select id="goalDetail" style="display:none; margin-top:10px;"></select>
+            <input type="text" id="goalCustom" style="display:none;" placeholder="목표를 직접 적어주세요">
         </div>
 
         <div class="step-section" data-step="5">
-            <span class="q-label">공략 타겟의 페르소나를 설정하세요</span>
-            <span class="item-label">연령 및 생애주기</span>
-            <select id="tAge">
-                <option>Z세대 (15-24)</option><option>MZ세대 직장인 (25-39)</option>
-                <option>경제 주도층 (40-54)</option><option>액티브 시니어 (55+)</option>
-                <option value="custom">직접 입력</option>
-            </select>
-            <span class="item-label">거주 지역/환경</span>
-            <select id="tLoc">
-                <option>수도권 밀집지역</option><option>지방 광역시 중심</option>
-                <option>글로벌 시장</option><option value="custom">직접 입력</option>
-            </select>
-            <span class="item-label">직업적 특성</span>
-            <select id="tJob">
-                <option>IT/전문직</option><option>자영업/CEO</option>
-                <option>학생/취준생</option><option value="custom">직접 입력</option>
-            </select>
-            <span class="item-label">가치관 및 라이프스타일</span>
-            <select id="tLife">
-                <option>가치 소비 중시</option><option>워라밸 추구형</option>
-                <option>미니멀리스트</option><option value="custom">직접 입력</option>
-            </select>
+            <span class="q-label">누구에게 이 가치를 전달할까요?</span>
+            <span class="item-label">핵심 연령층</span>
+            <select id="tAge"><option>MZ세대 (25-39)</option><option>4050 주부/가계관리자</option><option>액티브 시니어</option></select>
+            <span class="item-label">직업/라이프스타일</span>
+            <select id="tLife"><option>가치소비 중시형</option><option>전문직/고소득자</option><option>실용적 소비형</option></select>
+            <span class="item-label">거주 지역</span>
+            <input type="text" id="tLoc" placeholder="예: 전국, 수도권 거주자 등">
         </div>
 
         <div class="step-section" data-step="6">
-            <span class="q-label">감각적인 분위기를 설정해주세요</span>
-            <span class="item-label">비주얼 스타일/프레이밍</span>
-            <select id="mVis"><option>와이드한 시네마틱</option><option>클로즈업 위주의 감각적 연출</option><option>직관적인 인포그래픽</option></select>
-            <span class="item-label">핵심 컬러톤</span>
-            <select id="mCol"><option>고채도의 에너지틱</option><option>차분한 무채색/모노톤</option><option>파스텔톤의 서정적</option></select>
-            <span class="item-label">템포 및 사운드</span>
-            <select id="mSnd"><option>빠른 비트의 경쾌함</option><option>묵직하고 웅장한 오케스트라</option><option>ASMR적 생활 소음</option></select>
-            <span class="item-label">타이포그래피/그래픽</span>
-            <select id="mTyp"><option>볼드하고 강렬한 서체</option><option>얇고 세련된 명조체</option><option>손글씨 느낌의 휴머니즘</option></select>
+            <span class="q-label">전체적인 톤앤매너는 어떤가요?</span>
+            <div class="btn-grid">
+                <div class="sel-btn" onclick="setBtnSel('visual', this)">시네마틱/웅장한</div>
+                <div class="sel-btn" onclick="setBtnSel('visual', this)">심플/모던한</div>
+                <div class="sel-btn" onclick="setBtnSel('visual', this)">따뜻하고 서정적인</div>
+                <div class="sel-btn" onclick="setBtnSel('visual', this, true)">직접 입력</div>
+            </div>
+            <input type="text" id="visualCustom" style="display:none;" placeholder="추가적인 무드 키워드">
         </div>
 
         <div class="step-section" data-step="7">
-            <span class="q-label">제작 규격과 최종 상태를 확인합니다</span>
+            <span class="q-label">사양 및 협의 상태를 확인합니다</span>
             <div class="spec-box">
                 <div class="spec-grid">
-                    <div><label style="font-size:10px;">비율</label>
-                        <select id="sRatio"><option>16:9</option><option>9:16</option><option>1:1</option></select>
-                    </div>
-                    <div><label style="font-size:10px;">해상도</label>
-                        <select id="sRes"><option>4K</option><option>1080p</option><option>300dpi</option></select>
-                    </div>
-                    <div><label style="font-size:10px;">프레임</label>
-                        <select id="sFps"><option>24fps</option><option>30fps</option><option>60fps</option></select>
-                    </div>
+                    <div><label style="font-size:10px;">비율</label><select id="sRatio"><option>16:9</option><option>9:16</option></select></div>
+                    <div><label style="font-size:10px;">해상도</label><select id="sRes"><option>4K</option><option>1080p</option></select></div>
                     <div><label style="font-size:10px;">수량</label><input type="number" id="sQty" value="1"></div>
                     <div><label style="font-size:10px;">분량</label><input type="number" id="sDur" value="30"></div>
-                    <div><label style="font-size:10px;">단위</label><select id="sUnit"><option>초</option><option>분</option><option>P</option></select></div>
+                    <div><label style="font-size:10px;">단위</label><select id="sUnit"><option>초</option><option>분</option></select></div>
                     <button type="button" onclick="addSpec()" style="background:var(--primary); color:white;">추가</button>
                 </div>
                 <table class="added-table" id="specTable" style="display:none;">
-                    <thead><tr><th>비율</th><th>해상도</th><th>fps</th><th>수량</th><th>분량</th><th>삭제</th></tr></thead>
+                    <thead><tr><th>비율</th><th>해상도</th><th>수량</th><th>분량</th><th>삭제</th></tr></thead>
                     <tbody id="specBody"></tbody>
                 </table>
             </div>
             <span class="item-label">현재 협의 상태</span>
             <div class="btn-grid">
-                <div class="sel-btn" onclick="toggleStatus('협의 중')">협의 중</div>
-                <div class="sel-btn" onclick="toggleStatus('협의 완료')">협의 완료</div>
+                <div class="sel-btn" onclick="toggleStatus('협의 중', this)">협의 중</div>
+                <div class="sel-btn" onclick="toggleStatus('협의 완료', this)">협의 완료</div>
             </div>
             <div id="deadlineBox" style="display:none; margin-top:10px;">
-                <span class="item-label">마감 기한 설정</span>
                 <input type="date" id="deadlineDate">
             </div>
         </div>
 
         <div class="nav-btns no-print">
-            <button class="btn-prev" onclick="moveStep(-1)">이전</button>
-            <button class="btn-next" onclick="moveStep(1)">다음 단계</button>
+            <button class="btn-prev" onclick="moveStep(-1)">이전 단계</button>
+            <button class="btn-next" id="nextBtn" onclick="moveStep(1)">다음으로</button>
         </div>
     </div>
 
     <div id="resultView">
-        <div class="final-box">
-            <div id="resSentence" class="res-sentence"></div>
-            <table class="res-table" id="resSummary"></table>
+        <div class="final-card">
+            <h1 style="color:var(--primary); text-align:center; margin-bottom:30px;">STRATEGY PLANNING</h1>
+            <div id="resSentence" style="font-size:18px; line-height:1.8; margin-bottom:30px; padding:25px; background:#f8fafc; border-radius:15px; border-left:8px solid var(--primary);"></div>
+            <table class="res-table" id="resTable"></table>
         </div>
         <div class="nav-btns no-print">
-            <button class="btn-next" onclick="window.print()">인쇄/PDF 저장</button>
-            <button class="btn-prev" onclick="goToStep(1)">처음부터 수정</button>
+            <button class="btn-next" onclick="window.print()">인쇄 및 PDF 저장</button>
+            <button class="btn-prev" onclick="goToStep(1)">수정하기</button>
         </div>
     </div>
 </div>
 
 <script>
     let step = 1; let specs = [];
-    let sel = { projectType:'', usp:'', goal:'', status:'' };
+    let sel = { projectType:'', uspCat:'', goalCat:'', visual:'', status:'' };
 
     function setBtnSel(key, btn, isCustom) {
         sel[key] = btn.innerText;
@@ -215,9 +201,10 @@
         el.innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('');
     }
 
-    function toggleStatus(val) {
+    function toggleStatus(val, btn) {
         sel.status = val;
-        document.querySelectorAll('.sel-btn').forEach(b => { if(b.innerText === val) b.classList.add('active'); else if(b.innerText.includes('협의')) b.classList.remove('active'); });
+        btn.parentElement.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         document.getElementById('deadlineBox').style.display = (val === '협의 중') ? 'block' : 'none';
     }
 
@@ -225,7 +212,6 @@
         specs.push({
             r: document.getElementById('sRatio').value,
             s: document.getElementById('sRes').value,
-            f: document.getElementById('sFps').value,
             q: document.getElementById('sQty').value,
             d: document.getElementById('sDur').value,
             u: document.getElementById('sUnit').value
@@ -237,24 +223,15 @@
         document.getElementById('specTable').style.display = specs.length ? 'table' : 'none';
         document.getElementById('specBody').innerHTML = specs.map((x, i) => `
             <tr>
-                <td><select class="edit-select" onchange="specs[${i}].r=this.value">${['16:9','9:16','1:1'].map(v=>`<option ${x.r==v?'selected':''}>${v}</option>`).join('')}</select></td>
-                <td><select class="edit-select" onchange="specs[${i}].s=this.value">${['4K','1080p','300dpi'].map(v=>`<option ${x.s==v?'selected':''}>${v}</option>`).join('')}</select></td>
-                <td><select class="edit-select" onchange="specs[${i}].f=this.value">${['24fps','30fps','60fps'].map(v=>`<option ${x.f==v?'selected':''}>${v}</option>`).join('')}</select></td>
-                <td><span class="edit-num" onclick="editNum(${i},'q')">${x.q}</span></td>
-                <td><span class="edit-num" onclick="editNum(${i},'d')">${x.d}</span><span class="unit-toggle" onclick="toggleUnit(${i})">${x.u}</span></td>
-                <td style="color:red; cursor:pointer;" onclick="specs.splice(${i},1);renderSpecs();">×</td>
+                <td>${x.r}</td><td>${x.s}</td>
+                <td><input type="number" class="inline-edit" value="${x.q}" onchange="specs[${i}].q=this.value">개</td>
+                <td><input type="number" class="inline-edit" value="${x.d}" onchange="specs[${i}].d=this.value"><span class="unit-btn" onclick="toggleUnit(${i})">${x.u}</span></td>
+                <td style="color:red; cursor:pointer; font-weight:bold;" onclick="specs.splice(${i},1);renderSpecs();">×</td>
             </tr>`).join('');
     }
 
-    function editNum(idx, key) {
-        let p = prompt("수치를 입력하세요", specs[idx][key]);
-        if(p) { specs[idx][key] = p; renderSpecs(); }
-    }
-
     function toggleUnit(idx) {
-        const units = ['초','분','P'];
-        let curr = units.indexOf(specs[idx].u);
-        specs[idx].u = units[(curr + 1) % 3];
+        specs[idx].u = (specs[idx].u === '초') ? '분' : '초';
         renderSpecs();
     }
 
@@ -264,12 +241,19 @@
         document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
         step = n;
         document.querySelector(`[data-step="${step}"]`).classList.add('active');
-        document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i + 1 === step));
+        updateUI();
     }
 
     function moveStep(n) {
+        if(n === 1 && step === 1 && !document.getElementById('brandName').value) return alert("상품명을 입력해주세요!");
         if(step + n > 7) return showResult();
         goToStep(step + n);
+    }
+
+    function updateUI() {
+        document.getElementById('progressBar').style.width = (step * 14.2) + '%';
+        document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i + 1 === step));
+        document.getElementById('nextBtn').innerText = (step === 7) ? "기획서 생성" : "다음 단계";
     }
 
     function showResult() {
@@ -278,23 +262,25 @@
         
         const b = document.getElementById('brandName').value;
         const type = document.getElementById('projectTypeCustom').value || sel.projectType;
-        const usp = document.getElementById('uspCustom').value || document.getElementById('uspDetail').value;
-        const goal = document.getElementById('goalCustom').value || document.getElementById('goalDetail').value;
-        
+        const usp = document.getElementById('uspCustom').value || document.getElementById('uspDetail').value || "미정";
+        const goal = document.getElementById('goalCustom').value || document.getElementById('goalDetail').value || "미정";
+        const mood = document.getElementById('visualCustom').value || sel.visual;
+        const target = `${document.getElementById('tAge').value} / ${document.getElementById('tLife').value}`;
+
         document.getElementById('resSentence').innerHTML = `
-            본 프로젝트는 <b>${b}</b>의 <b>"${usp}"</b> 가치를 핵심 전략으로 삼아, <br>
-            <b>${document.getElementById('tAge').value}</b> 타겟에게 <b>${document.getElementById('mVis').value}</b> 연출과 <b>${document.getElementById('mSnd').value}</b> 사운드를 활용한 <b>[${type}]</b>을 제안합니다. <br>
-            궁극적으로 <b>${sel.goalCat}</b> 차원의 <b>${goal}</b> 성과를 실현하는 것을 최종 목표로 합니다.
+            이번 프로젝트는 <b>${b}</b>의 핵심 가치인 <b>"${usp}"</b>을(를) 기반으로 하여, <br>
+            <b>${target}</b> 타겟에게 가장 효과적인 <b>[${type}]</b> 제작을 목표로 합니다. <br>
+            전체적으로 <b>${mood}</b>한 톤앤매너를 유지하며, 궁극적으로 <b>${goal}</b>을 달성하기 위한 전략적 기획입니다.
         `;
 
-        const rows = [
-            ["상품명", b], ["제작물 정의", type], ["핵심 전략(가치)", usp], ["비즈니스 목표", goal],
-            ["타겟 페르소나", `${document.getElementById('tAge').value} / ${document.getElementById('tJob').value} / ${document.getElementById('tLife').value}`],
-            ["톤앤매너", `${document.getElementById('mVis').value} / ${document.getElementById('mCol').value} / ${document.getElementById('mTyp').value}`],
-            ["협의 상태", `${sel.status} ${sel.status === '협의 중' ? '(기한: '+document.getElementById('deadlineDate').value+')' : ''}`]
+        const data = [
+            ["상품명", b], ["제작물", type], ["핵심 가치", usp], ["비즈니스 목표", goal],
+            ["타겟", target], ["분위기", mood], ["협의 상태", `${sel.status} ${sel.status === '협의 중' ? '('+document.getElementById('deadlineDate').value+')' : ''}`]
         ];
-        document.getElementById('resSummary').innerHTML = rows.map(r => `<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('') + 
-        `<tr><th>최종 사양</th><td>${specs.map(s=>`${s.r}, ${s.s}, ${s.f}, ${s.q}개, ${s.d}${s.u}`).join('<br>')}</td></tr>`;
+        
+        document.getElementById('resTable').innerHTML = data.map(r => `<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('') + 
+        `<tr><th>제작 사양</th><td>${specs.map(s=>`${s.r} / ${s.s} / ${s.q}개 / ${s.d}${s.u}`).join('<br>') || "등록된 사양 없음"}</td></tr>`;
+        window.scrollTo(0,0);
     }
 </script>
 </body>
