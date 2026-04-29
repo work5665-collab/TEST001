@@ -3,205 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스마트 프로젝트 빌더 v6.0</title>
+    <title>프로젝트 전략 기획 빌더 v6.5</title>
     <style>
-        :root { --primary: #1e40af; --accent: #3b82f6; --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; }
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 850px; margin: 0 auto; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
-        
-        /* 큼직한 네비게이션 */
-        .step-nav { display: flex; overflow-x: auto; gap: 10px; margin-bottom: 30px; padding-bottom: 10px; }
-        .nav-dot { flex-shrink: 0; padding: 10px 20px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 30px; font-size: 13px; font-weight: 800; cursor: pointer; color: #94a3b8; }
-        .nav-dot.active { background: var(--primary); color: white; border-color: var(--primary); }
+        /* 1. 디자인 시스템 & 컬러 (남색 톤) */
+        :root {
+            --primary: #0f172a; /* 딥 네이비 */
+            --secondary: #1e293b; /* 미드 네이비 */
+            --accent: #3b82f6; /* 포인트 블루 */
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --muted: #64748b;
+        }
 
-        .progress-container { width: 100%; height: 10px; background: #e2e8f0; border-radius: 10px; margin-bottom: 30px; }
-        .progress-bar { height: 100%; background: var(--primary); border-radius: 10px; width: 14.2%; transition: 0.4s; }
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 20px;
+            line-height: 1.6;
+            display: flex; justify-content: center;
+        }
 
+        .container {
+            width: 100%; max-width: 850px;
+            background: var(--card);
+            padding: 50px; border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.1);
+        }
+
+        /* 2. 네비게이션 & 진행 바 */
+        .step-nav {
+            display: flex; overflow-x: auto; gap: 12px;
+            margin-bottom: 35px; padding-bottom: 15px;
+            scrollbar-width: none;
+        }
+        .step-nav::-webkit-scrollbar { display: none; }
+        .nav-dot {
+            flex-shrink: 0; padding: 12px 24px;
+            background: #fff; border: 2px solid var(--border);
+            border-radius: 40px; font-size: 14px; font-weight: 800;
+            cursor: pointer; color: var(--muted); transition: 0.3s;
+        }
+        .nav-dot.active {
+            background: var(--primary); color: white; border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2);
+        }
+
+        .progress-container { width: 100%; height: 10px; background: #e2e8f0; border-radius: 10px; margin-bottom: 40px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 14.2%; transition: 0.5s; }
+
+        /* 3. 섹션 및 레이아웃 (복구된 큼직한 사이즈) */
         .step-section { display: none; }
-        .step-section.active { display: block; animation: fadeIn 0.3s; }
+        .step-section.active { display: block; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .q-label { font-size: 26px; font-weight: 900; margin-bottom: 25px; display: block; color: var(--primary); letter-spacing: -1px; }
-        .item-label { font-weight: 700; font-size: 16px; margin-top: 25px; display: block; color: #475569; }
+        .q-label { font-size: 28px; font-weight: 900; margin-bottom: 30px; display: block; color: var(--primary); letter-spacing: -1px; }
+        .item-label { font-weight: 800; font-size: 16px; margin-top: 30px; display: block; color: var(--secondary); border-left: 5px solid var(--primary); padding-left: 15px; }
 
-        /* 큼직한 카테고리 버튼 */
-        .category-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .cat-btn { padding: 22px; border: 3px solid #e2e8f0; border-radius: 18px; cursor: pointer; text-align: center; font-weight: 700; font-size: 16px; background: #fff; transition: 0.2s; }
-        .cat-btn.selected { border-color: var(--primary); background: #eff6ff; color: var(--primary); box-shadow: 0 5px 15px rgba(30, 64, 175, 0.15); }
+        .category-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .cat-btn {
+            padding: 25px; border: 3px solid var(--border); border-radius: 20px;
+            cursor: pointer; text-align: center; font-weight: 700; font-size: 17px;
+            background: #fff; transition: 0.2s;
+        }
+        .cat-btn.selected {
+            border-color: var(--primary); background: #f8fafc; color: var(--primary);
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.1);
+        }
 
-        select, input { width: 100%; padding: 18px; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 16px; box-sizing: border-box; margin-top: 12px; }
-        
-        /* 제작 사양 섹션 */
-        .spec-builder { background: #f8fafc; padding: 30px; border-radius: 20px; border: 2px solid #e2e8f0; margin-top: 30px; }
-        .spec-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; align-items: end; }
-        @media (min-width: 600px) { .spec-row { grid-template-columns: 1.2fr 0.8fr 1fr 1fr 1fr 70px; } }
+        select, input {
+            width: 100%; padding: 20px; border: 2px solid var(--border); border-radius: 16px;
+            font-size: 16px; box-sizing: border-box; margin-top: 15px;
+        }
 
-        .added-table-wrapper { overflow-x: auto; margin-top: 25px; border-radius: 14px; border: 2px solid #e2e8f0; }
-        .added-table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; min-width: 650px; }
-        .added-table th { background: #f1f5f9; padding: 15px; border-bottom: 3px solid #e2e8f0; font-weight: 800; }
-        .added-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; text-align: center; }
+        /* 4. 제작 사양 섹션 (수정 기능 강화) */
+        .spec-builder { background: #f8fafc; padding: 35px; border-radius: 24px; border: 2px solid var(--border); margin-top: 40px; }
+        .spec-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; align-items: end; }
+        @media (min-width: 600px) { .spec-row { grid-template-columns: 1.2fr 0.8fr 1fr 1.2fr 1fr 70px; } }
 
-        .edit-num { width: 60px; padding: 10px; border: 2px solid #fde68a; background: #fffdf0; border-radius: 8px; text-align: center; font-weight: 800; color: #b45309; font-size: 15px; }
-        .unit-badge { background: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 900; }
-        .list-select { padding: 8px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 13px; font-weight: 600; width: 100%; }
-        .del-btn { color: #ef4444; font-weight: 900; cursor: pointer; padding: 10px; font-size: 20px; }
+        .added-table-wrapper { overflow-x: auto; margin-top: 30px; border-radius: 18px; border: 2px solid var(--border); background: #fff; }
+        .added-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 700px; }
+        .added-table th { background: #f1f5f9; padding: 18px; border-bottom: 3px solid var(--border); font-weight: 800; }
+        .added-table td { padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: center; }
 
-        /* 이전/다음 버튼 레이아웃 복구 */
-        .nav-btns { margin-top: 40px; display: flex; gap: 15px; }
-        .btn-prev { background: #e2e8f0; color: #475569; width: 120px; padding: 22px; font-size: 18px; }
-        .btn-next { background: var(--primary); color: white; flex: 1; padding: 22px; font-size: 18px; font-weight: 800; }
-        button { border-radius: 18px; border: none; cursor: pointer; transition: 0.2s; }
+        .edit-num { width: 65px; padding: 10px; border: 2px solid #cbd5e1; background: #fffdf0; border-radius: 10px; text-align: center; font-weight: 800; color: #b45309; font-size: 15px; }
+        .unit-badge { background: var(--primary); color: #fff; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 900; }
+        .list-select { padding: 8px; border-radius: 10px; border: 2px solid #cbd5e1; font-size: 13px; font-weight: 700; width: 100%; }
+        .del-btn { color: #ef4444; font-weight: 900; cursor: pointer; padding: 10px; font-size: 22px; }
+
+        /* 5. 네비게이션 버튼 (복구된 큼직한 사이즈) */
+        .nav-btns { margin-top: 50px; display: flex; gap: 20px; }
+        .btn-prev { background: #e2e8f0; color: #475569; width: 140px; padding: 24px; font-size: 18px; }
+        .btn-next { background: var(--primary); color: white; flex: 1; padding: 24px; font-size: 20px; font-weight: 800; }
+        button { border-radius: 20px; border: none; cursor: pointer; transition: 0.3s; }
         button:hover { filter: brightness(1.1); }
 
+        /* 6. 결과 페이지 (한글화 및 안내 보강) */
         #resultView { display: none; }
-        .final-box { border: 3px solid var(--primary); padding: 35px; border-radius: 28px; }
-        .res-table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-        .res-table th { background: #f8fafc; width: 150px; text-align: left; padding: 20px; border: 1px solid #e2e8f0; font-size: 15px; }
-        .res-table td { padding: 20px; border: 1px solid #e2e8f0; font-size: 16px; font-weight: 600; }
+        .final-box { border: 4px solid var(--primary); padding: 45px; border-radius: 32px; background: #fff; }
+        .res-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+        .res-table th { background: #f8fafc; width: 180px; text-align: left; padding: 25px; border: 1px solid var(--border); font-size: 16px; color: var(--muted); }
+        .res-table td { padding: 25px; border: 1px solid var(--border); font-size: 18px; font-weight: 700; color: var(--primary); }
+
+        .notice-box { background: #f1f5f9; border-radius: 16px; padding: 25px; margin-top: 35px; font-size: 15px; color: #475569; line-height: 1.8; }
+
+        @media print { .no-print { display: none; } .container { box-shadow: none; padding: 0; } body { background: #fff; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="step-nav" id="stepNav">
-        <div class="nav-dot active" onclick="goToStep(1)">1.제목</div>
-        <div class="nav-dot" onclick="goToStep(2)">2.USP</div>
-        <div class="nav-dot" onclick="goToStep(3)">3.목표</div>
-        <div class="nav-dot" onclick="goToStep(4)">4.타겟</div>
-        <div class="nav-dot" onclick="goToStep(5)">5.톤앤매너</div>
-        <div class="nav-dot" onclick="goToStep(6)">6.플랫폼</div>
-        <div class="nav-dot" onclick="goToStep(7)">7.제작사양</div>
+    <div class="step-nav no-print" id="stepNav">
+        <div class="nav-dot active" onclick="goToStep(1)">1. 기본 정보</div>
+        <div class="nav-dot" onclick="goToStep(2)">2. 핵심 강점</div>
+        <div class="nav-dot" onclick="goToStep(3)">3. 세부 목표</div>
+        <div class="nav-dot" onclick="goToStep(4)">4. 타겟 고객</div>
+        <div class="nav-dot" onclick="goToStep(5)">5. 제작 무드</div>
+        <div class="nav-dot" onclick="goToStep(6)">6. 송출 채널</div>
+        <div class="nav-dot" onclick="goToStep(7)">7. 제작 사양</div>
     </div>
 
-    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-container no-print"><div class="progress-bar" id="progressBar"></div></div>
 
     <div id="formView">
         <div class="step-section active" data-step="1">
-            <span class="q-label">프로젝트 명칭을 입력하세요</span>
-            <input type="text" id="brandName" placeholder="예: 2026 하반기 신제품 런칭 캠페인">
-            <span class="item-label">콘텐츠 카테고리</span>
+            <span class="q-label">프로젝트의 명칭을 입력해 주세요</span>
+            <input type="text" id="brandName" placeholder="예: 2026 하반기 글로벌 캠페인 '더 웨이브'">
+            <span class="item-label">콘텐츠 제작 카테고리</span>
             <select id="contentType">
-                <option value="브랜드 홍보 영상">브랜드 홍보 영상 (TVCF, 디지털 필름)</option>
-                <option value="SNS 광고 소재">SNS 마케팅 소재 (쇼츠, 릴스, 유튜브)</option>
-                <option value="제품 기능 소개">제품 기능 소개 및 튜토리얼</option>
-                <option value="전시/이벤트 영상">전시, 박람회, 이벤트 오프닝</option>
-                <option value="기업 IR/홍보">기업 홍보 및 투자 유치 영상</option>
+                <option value="종합 브랜드 필름">종합 브랜드 필름 (TVCF, 고감도 영상)</option>
+                <option value="디지털 캠페인 소재">디지털 캠페인 소재 (유튜브 광고, 바이럴)</option>
+                <option value="SNS 숏폼/바이럴">SNS 숏폼 소재 (인스타그램 릴스, 틱톡)</option>
+                <option value="전시 및 사이니지">전시회 및 매장용 사이니지 콘텐츠</option>
+                <option value="IR 및 기업 소개">IR/투자유치용 프레젠테이션 자료</option>
             </select>
         </div>
 
         <div class="step-section" data-step="2">
-            <span class="q-label">제품의 핵심 경쟁력 (USP)</span>
+            <span class="q-label">제품/브랜드의 핵심 경쟁력은? (USP)</span>
             <div class="category-group">
-                <div class="cat-btn" onclick="selectUSP('성능 및 기술', ['업계 최고 수준의 하드웨어 사양', '독자적인 원천 특허 기술 보유', '극한 환경에서의 내구성 검증', 'AI 기반 스마트 지능형 솔루션', '압도적인 작업 처리 속도'])">성능/기술</div>
-                <div class="cat-btn" onclick="selectUSP('디자인 및 감성', ['미니멀리즘 기반의 세련된 외형', 'MZ세대 타겟의 트렌디한 컬러웨이', '사용자 중심의 직관적 UX/UI', '프리미엄 소재를 사용한 질감 구현', '공간의 품격을 높이는 인테리어 오브제'])">디자인/감성</div>
-                <div class="cat-btn" onclick="selectUSP('경제성 및 가격', ['시장 가격 파괴적 수준의 가성비', '장기 사용 시 유지보수 비용 절감', '에너지 효율 1등급의 경제성', '초기 도입 비용 부담 없는 구독 모델', '중고 잔존 가치 보존율 업계 최고'])">가격/경제성</div>
-                <div class="cat-btn" onclick="selectUSP('브랜드 및 철학', ['지구와 환경을 생각하는 지속가능성', '오랜 역사가 증명하는 브랜드 헤리티지', '사용자의 삶을 변화시키는 진정성', '사회적 책임을 다하는 ESG 경영 가치', '충성도 높은 팬덤 기반의 커뮤니티'])">브랜드 가치</div>
-                <div class="cat-btn" onclick="selectUSP('서비스 및 솔루션', ['365일 24시간 실시간 고객 지원', '원클릭으로 해결되는 간편한 사용성', '개인별 맞춤형 커스터마이징 제공', '기존 기기와의 완벽한 에코시스템 연동', '전문가가 직접 방문하는 프리미엄 서비스'])">서비스/편의</div>
+                <div class="cat-btn" onclick="selectUSP('성능 및 기술', ['업계 초격차 하드웨어 사양', '독자적인 원천 특허 기술력', '극한 환경 테스트 기반의 신뢰성', 'AI 데이터 기반의 지능형 기술', '압도적인 작업 처리 속도'])">성능/기술</div>
+                <div class="cat-btn" onclick="selectUSP('디자인 및 감성', ['미니멀리즘 기반의 세련된 외형', 'MZ세대 타겟의 트렌디한 감성', '사용자 중심의 직관적 UX/UI', '프리미엄 소재 사용 및 높은 질감', '공간 미학을 완성하는 디자인'])">디자인/감성</div>
+                <div class="cat-btn" onclick="selectUSP('경제성 및 가격', ['시장 파괴적 수준의 가성비', '장기 사용 시 유지관리 비용 절감', '에너지 효율 1등급의 경제성', '합리적인 구독/렌탈 금융 모델', '중고 잔존 가치 업계 최고 수준'])">가격/경제성</div>
+                <div class="cat-btn" onclick="selectUSP('신뢰 및 안정성', ['국내외 공인 기관의 압도적 인증', '사고를 방지하는 다중 안전 설계', '오랜 업력이 증명하는 철저한 신뢰', '보안 및 데이터 유출 제로 시스템', '철저한 사후 관리 및 보증 체계'])">신뢰/안정성</div>
+                <div class="cat-btn" onclick="selectUSP('브랜드 및 철학', ['지구와 환경을 위한 지속가능성(ESG)', '진정성 있는 브랜드 헤리티지 스토리', '사용자의 삶을 변화시키는 가치 전달', '사회적 책임을 다하는 기업 이미지', '강력한 팬덤 기반의 커뮤니티 파워'])">브랜드/가치</div>
+                <div class="cat-btn" onclick="selectUSP('서비스 및 편의', ['365일 24시간 실시간 고객 지원', '원클릭으로 해결되는 간편한 사용성', '개인별 맞춤형 커스터마이징 서비스', '완벽한 스마트 에코시스템 연동', '전문가 방문 프리미엄 케어 서비스'])">서비스/편의</div>
             </div>
             <select id="uspDetail" style="display:none;"></select>
-            <input type="text" id="uspCustom" placeholder="상기 항목 외 직접 입력이 필요한 경우 작성하세요">
+            <input type="text" id="uspCustom" placeholder="상기 항목 외에 직접 입력하실 수 있습니다">
         </div>
 
         <div class="step-section" data-step="3">
-            <span class="q-label">프로젝트의 궁극적 목표</span>
+            <span class="q-label">이번 제작을 통해 달성하고자 하는 목표는?</span>
             <div class="category-group">
-                <div class="cat-btn" onclick="selectGoal('인지도 확산', ['신규 브랜드의 성공적인 시장 안착', '폭발적인 대중적 바이럴 이슈 형성', '포털 사이트 브랜드 검색량 200% 증대', '잠재 고객 도달 및 노출 극대화'])">인지도 확산</div>
-                <div class="cat-btn" onclick="selectGoal('세일즈 증대', ['웹사이트 구매 전환율 및 매출 증대', '프로모션 기간 내 신규 가입자 확보', '이탈 고객 재유입 및 장바구니 증대', '오프라인 매장 방문 및 시승 유도'])">세일즈 유도</div>
-                <div class="cat-btn" onclick="selectGoal('브랜드 강화', ['브랜드 프리미엄 이미지 구축 및 제고', '해당 분야 최고 전문가 이미지 선점', '노후된 브랜드 이미지의 젊은 리뉴얼', '고객 신뢰도 및 기업 투명성 확보'])">브랜딩 강화</div>
-                <div class="cat-btn" onclick="selectGoal('고객 소통', ['SNS 팔로워 및 커뮤니티 규모 확장', '사용자 참여형 캠페인 활성화', '고객 충성도 제고 및 팬덤 형성', '리뷰 및 UGC(사용자 콘텐츠) 생성 유도'])">소통 및 팬덤</div>
+                <div class="cat-btn" onclick="selectGoal('인지도 확산', ['신규 브랜드의 성공적인 시장 안착', '폭발적인 대중적 바이럴 이슈 형성', '브랜드 검색량 및 유입 200% 증대', '잠재 고객 도달 및 노출 극대화', '브랜드 존재감의 강력한 각인'])">인지도 확산</div>
+                <div class="cat-btn" onclick="selectGoal('세일즈 증대', ['직접적인 매출 증대 및 구매 전환', '신규 유입 및 상담 신청자 확보', '이탈 고객 재유입 및 장바구니 증대', '오프라인 매장 방문 및 시승 유도', '기존 고객의 업그레이드 재구매'])">세일즈 유도</div>
+                <div class="cat-btn" onclick="selectGoal('브랜드 가치 제고', ['프리미엄 이미지 구축 및 가치 제고', '해당 분야 최고 전문가 이미지 선점', '노후된 이미지의 젊은 리뉴얼 효과', '기업의 사회적 가치 및 투명성 증명', '글로벌 시장 공략을 위한 기반 구축'])">브랜딩 강화</div>
+                <div class="cat-btn" onclick="selectGoal('고객 소통/팬덤', ['SNS 팔로워 및 커뮤니티 규모 확장', '사용자 참여형 캠페인 활성화', '고객 충성도 제고 및 팬덤 형성', '리뷰 및 UGC(사용자 콘텐츠) 생성 유도', '고객 경험 개선을 위한 피드백 확보'])">소통/팬덤</div>
             </div>
             <select id="goalDetail" style="display:none;"></select>
         </div>
 
         <div class="step-section" data-step="4">
-            <span class="q-label">타겟 세분화</span>
-            <span class="item-label">1. 타겟 연령층</span>
+            <span class="q-label">누구에게 이 메시지를 전달할까요?</span>
+            <span class="item-label">1. 주요 연령대</span>
             <select id="targetAge">
-                <option>1020 알파/Z세대 (트렌드 민감층)</option>
-                <option>2030 사회초년생 및 1인가구</option>
-                <option>3040 핵심 소비층 (경제적 안정군)</option>
-                <option>5060 액티브 시니어 (구매력 보유군)</option>
+                <option>1020 알파/Z세대 (트렌드 세터)</option>
+                <option>2030 사회초년생 및 직장인 (실용 소비군)</option>
+                <option>3040 핵심 소비 주축 (구매력 기반 안정군)</option>
+                <option>5060 액티브 시니어 (프리미엄 가치 지향)</option>
                 <option>전 연령대 통합 타겟</option>
             </select>
-            <span class="item-label">2. 타겟 직업 및 관심사</span>
+            <span class="item-label">2. 주요 직업군</span>
             <select id="targetJob">
-                <option>전문직 및 고소득 사무직</option>
-                <option>창의적 프리랜서 및 예술가</option>
+                <option>사무직 직장인 및 전문직 종사자</option>
+                <option>자영업 및 자유로운 프리랜서</option>
                 <option>대학생 및 취업 준비생</option>
-                <option>비즈니스 의사결정자 (B2B)</option>
+                <option>비즈니스 의사결정자 및 경영진</option>
+                <option>특정 분야 매니아 및 취미 전문가</option>
             </select>
-            <select id="targetLife" style="margin-top:10px;">
-                <option>자기계발 및 웰니스 지향 라이프</option>
-                <option>가치 소비 및 친환경 중심 라이프</option>
-                <option>반려동물 및 가족 케어 중심 라이프</option>
-                <option>디지털 테크 및 얼리어답터 라이프</option>
+            <span class="item-label">3. 라이프스타일/관심사</span>
+            <select id="targetLife">
+                <option>자기계발 및 웰니스(건강) 지향</option>
+                <option>가치 소비 및 친환경 보호 지향</option>
+                <option>반려동물 양육 및 가족 중심 생활</option>
+                <option>테크놀로지 및 얼리어답터 성향</option>
+                <option>미니멀리즘 및 실속 있는 합리적 소비</option>
             </select>
         </div>
 
         <div class="step-section" data-step="5">
-            <span class="q-label">톤앤매너 연출</span>
-            <span class="item-label">시각적 스타일</span>
+            <span class="q-label">어떤 분위기와 호흡으로 제작할까요?</span>
+            <span class="item-label">시각적 스타일 (비주얼)</span>
             <div class="category-group" id="visualGroup">
-                <div class="cat-btn" onclick="setVisual(this, '시네마틱')">시네마틱</div>
-                <div class="cat-btn" onclick="setVisual(this, '미니멀')">미니멀</div>
-                <div class="cat-btn" onclick="setVisual(this, '비비드')">비비드</div>
-                <div class="cat-btn" onclick="setVisual(this, '레트로')">레트로/빈티지</div>
+                <div class="cat-btn" onclick="setVisual(this, '시네마틱하고 웅장한')">시네마틱</div>
+                <div class="cat-btn" onclick="setVisual(this, '미니멀하고 깨끗한')">미니멀/클린</div>
+                <div class="cat-btn" onclick="setVisual(this, '비비드하고 화려한')">비비드/팝</div>
+                <div class="cat-btn" onclick="setVisual(this, '따뜻하고 감성적인')">감성/레트로</div>
             </div>
-            <span class="item-label">편집 호흡</span>
+            <span class="item-label">편집 호흡 (리듬감)</span>
             <div class="category-group" id="tempoGroup">
-                <div class="cat-btn" onclick="setTempo(this, '빠른 템포')">빠른 호흡</div>
-                <div class="cat-btn" onclick="setTempo(this, '안정적 템포')">안정적 호흡</div>
-                <div class="cat-btn" onclick="setTempo(this, '느린 템포')">진중한 호흡</div>
+                <div class="cat-btn" onclick="setTempo(this, '빠르고 강렬한 리듬')">빠른 호흡 (숏폼용)</div>
+                <div class="cat-btn" onclick="setTempo(this, '정보가 명확히 전달되는 편안한 속도')">안정적 호흡 (이해 중심)</div>
+                <div class="cat-btn" onclick="setTempo(this, '웅장하고 서사적인 깊이 있는 속도')">진중한 호흡 (깊이감 중심)</div>
+                <div class="cat-btn" onclick="setTempo(this, '음악과 영상이 하나 된 감각적 리듬')">감각적 호흡 (비트 싱크)</div>
             </div>
         </div>
 
         <div class="step-section" data-step="6">
-            <span class="q-label">송출 플랫폼</span>
+            <span class="q-label">송출 플랫폼을 모두 선택해 주세요</span>
             <div class="category-group" id="pfGroup">
-                <div class="cat-btn" onclick="this.classList.toggle('selected')">유튜브 (가로/롱폼)</div>
+                <div class="cat-btn" onclick="this.classList.toggle('selected')">유튜브 (가로형/롱폼)</div>
                 <div class="cat-btn" onclick="this.classList.toggle('selected')">인스타그램 (릴스/피드)</div>
-                <div class="cat-btn" onclick="this.classList.toggle('selected')">틱톡/쇼츠 (세로형)</div>
+                <div class="cat-btn" onclick="this.classList.toggle('selected')">틱톡 / 유튜브 쇼츠</div>
                 <div class="cat-btn" onclick="this.classList.toggle('selected')">TV 광고 (공중파/케이블)</div>
-                <div class="cat-btn" onclick="this.classList.toggle('selected')">옥외광고 (전광판/사이니지)</div>
+                <div class="cat-btn" onclick="this.classList.toggle('selected')">전광판 / 외부 사이니지</div>
+                <div class="cat-btn" onclick="this.classList.toggle('selected')">전시회 / 박람회 메인 영상</div>
             </div>
         </div>
 
         <div class="step-section" data-step="7">
-            <span class="q-label">제작 규격 및 수량</span>
+            <span class="q-label">상세 제작 규격과 수량입니다</span>
             <div class="spec-builder">
                 <div class="spec-row">
-                    <div><label style="font-weight:bold; font-size:12px;">분량</label><input type="number" id="sDur" placeholder="30" onfocus="this.value=''"></div>
-                    <div><label style="font-weight:bold; font-size:12px;">단위</label><select id="sUnit"><option>초</option><option>분</option></select></div>
-                    <div><label style="font-weight:bold; font-size:12px;">비율</label><select id="sRatio"><option>16:9 가로</option><option>9:16 세로</option><option>1:1 정방</option><option>21:9 시네마</option></select></div>
-                    <div><label style="font-weight:bold; font-size:12px;">해상도</label><select id="sRes"><option>4K</option><option>FHD</option><option>8K</option></select></div>
-                    <div><label style="font-weight:bold; font-size:12px;">수량</label><input type="number" id="sQty" value="1" onfocus="this.value=''"></div>
-                    <button type="button" onclick="addSpec()" style="background:var(--primary); color:white; padding:15px; border-radius:12px;">추가</button>
+                    <div><label style="font-weight:900; font-size:12px;">분량(숫자)</label><input type="number" id="sDur" placeholder="30" onfocus="this.value=''"></div>
+                    <div><label style="font-weight:900; font-size:12px;">단위</label><select id="sUnit"><option>초</option><option>분</option></select></div>
+                    <div><label style="font-weight:900; font-size:12px;">화면비</label><select id="sRatio"><option>16:9 가로</option><option>9:16 세로</option><option>1:1 정방</option><option>21:9 시네마틱</option></select></div>
+                    <div><label style="font-weight:900; font-size:12px;">해상도</label><select id="sRes">
+                        <option value="4K (Ultra HD - 최상의 선명함)">4K (Ultra HD - 최상위)</option>
+                        <option value="1080p (FHD - 고화질 표준)">1080p (FHD - 고화질 표준)</option>
+                        <option value="720p (HD - 일반 화질)">720p (HD - 일반 화질)</option>
+                    </select></div>
+                    <div><label style="font-weight:900; font-size:12px;">수량</label><input type="number" id="sQty" value="1" onfocus="this.value=''"></div>
+                    <button type="button" onclick="addSpec()" style="background:var(--primary); color:white; padding:15px; border-radius:15px; border:none; font-weight:800; cursor:pointer;">+</button>
                 </div>
                 
                 <div class="added-table-wrapper" id="specTable" style="display:none;">
                     <table class="added-table">
-                        <thead><tr><th>분량</th><th>비율</th><th>해상도</th><th>수량</th><th>삭제</th></tr></thead>
+                        <thead><tr><th>분량</th><th>화면비</th><th>해상도</th><th>수량</th><th>삭제</th></tr></thead>
                         <tbody id="specBody"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <div class="nav-btns">
-            <button class="btn-prev" id="prevBtn" style="visibility:hidden;" onclick="moveStep(-1)">이전으로</button>
-            <button class="btn-next" onclick="moveStep(1)">다음 단계로</button>
+        <div class="nav-btns no-print">
+            <button class="btn-prev" id="prevBtn" style="visibility:hidden;" onclick="moveStep(-1)">이전 단계</button>
+            <button class="btn-next" onclick="moveStep(1)">다음으로</button>
         </div>
     </div>
 
     <div id="resultView">
-        <header><h1 style="color:var(--primary); font-size:28px;">PROJECT STRATEGY SHEET</h1></header>
+        <header><h1 style="color:var(--primary); font-size:32px; letter-spacing:-1px;">프로젝트 전략 기획서</h1></header>
         <div class="final-box">
-            <div id="resSentence" style="font-size:19px; line-height:1.7; margin-bottom:25px;"></div>
+            <div id="resSentence" style="font-size:20px; line-height:1.8; margin-bottom:35px; border-bottom:2px solid #eee; padding-bottom:30px;"></div>
             <table class="res-table" id="resBody"></table>
+            
+            <div class="notice-box no-print">
+                <strong style="color:var(--primary); display:block; margin-bottom:10px;">📋 제작 안내 및 유의사항</strong>
+                • 본 기획서는 프로젝트의 초기 방향성 설정을 위한 전략 문서로, 제작 공정 중 연출상의 이유로 미세 조정될 수 있습니다.<br>
+                • 4K 이상 초고해상도 촬영 및 작업 시 하드웨어 사양에 따라 추가 기술료가 발생할 수 있습니다.<br>
+                • 제작 사양 항목을 클릭하여 수정할 경우 최종 정의서에 즉시 반영됩니다.
+            </div>
         </div>
-        <div class="nav-btns">
-            <button class="btn-next" onclick="window.print()" style="font-size:20px;">PDF 저장 및 인쇄</button>
-            <button class="btn-prev" style="width:auto; padding:0 30px;" onclick="goToStep(1)">전체 수정하기</button>
+        <div class="nav-btns no-print">
+            <button class="btn-next" onclick="window.print()" style="font-size:22px;">PDF 저장 및 인쇄</button>
+            <button class="btn-prev" style="width:auto; padding:0 35px;" onclick="goToStep(1)">내용 수정하기</button>
         </div>
     </div>
 </div>
@@ -209,7 +278,7 @@
 <script>
     let step = 1;
     let specs = [];
-    let sel = { visual: '', tempo: '', uspSub: '', goalSub: '' };
+    let sel = { visual: '', tempo: '', uspCat: '', uspSub: '', goalCat: '', goalSub: '' };
 
     function goToStep(n) {
         document.getElementById('formView').style.display = 'block';
@@ -221,7 +290,7 @@
     }
 
     function moveStep(n) {
-        if(n === 1 && step === 1 && !document.getElementById('brandName').value) return alert("프로젝트 이름을 입력해주세요!");
+        if(n === 1 && step === 1 && !document.getElementById('brandName').value) return alert("프로젝트 이름을 입력해 주세요!");
         if(step + n > 7) return showResult();
         goToStep(step + n);
     }
@@ -255,7 +324,7 @@
     function addSpec() {
         const d = document.getElementById('sDur').value;
         if(!d) return alert("분량을 입력하세요");
-        specs.push({ d, u: document.getElementById('sUnit').value, r: document.getElementById('sRatio').value, s: document.getElementById('sRes').value, q: document.getElementById('sQty').value });
+        specs.push({ d: d, u: document.getElementById('sUnit').value, r: document.getElementById('sRatio').value, s: document.getElementById('sRes').value, q: document.getElementById('sQty').value });
         renderSpecs();
         document.getElementById('sDur').value = '';
     }
@@ -269,11 +338,12 @@
                     <option ${x.r.includes('16:9')?'selected':''}>16:9 가로</option>
                     <option ${x.r.includes('9:16')?'selected':''}>9:16 세로</option>
                     <option ${x.r.includes('1:1')?'selected':''}>1:1 정방</option>
+                    <option ${x.r.includes('21:9')?'selected':''}>21:9 시네마틱</option>
                 </select></td>
                 <td><select class="list-select" onchange="specs[${i}].s=this.value">
-                    <option ${x.s==='4K'?'selected':''}>4K</option>
-                    <option ${x.s==='FHD'?'selected':''}>FHD</option>
-                    <option ${x.s==='8K'?'selected':''}>8K</option>
+                    <option ${x.s.includes('4K')?'selected':''}>4K (초고화질)</option>
+                    <option ${x.s.includes('1080p')?'selected':''}>1080p (FHD)</option>
+                    <option ${x.s.includes('720p')?'selected':''}>720p (HD)</option>
                 </select></td>
                 <td><input type="number" class="edit-num" value="${x.q}" onfocus="this.value=''" onchange="specs[${i}].q=this.value">개</td>
                 <td><span class="del-btn" onclick="specs.splice(${i},1);renderSpecs();">×</span></td>
@@ -286,16 +356,26 @@
     function showResult() {
         document.getElementById('formView').style.display = 'none';
         document.getElementById('resultView').style.display = 'block';
+        const brand = document.getElementById('brandName').value;
+        const target = `${document.getElementById('targetAge').value} / ${document.getElementById('targetJob').value} / ${document.getElementById('targetLife').value}`;
         const pfs = Array.from(document.querySelectorAll('#pfGroup .cat-btn.selected')).map(b => b.innerText).join(', ');
-        document.getElementById('resSentence').innerHTML = `<b>${document.getElementById('brandName').value}</b> 프로젝트는 <b>${sel.uspSub}</b> 가치를 <b>${sel.visual}</b>한 감각으로 제안합니다.`;
+
+        document.getElementById('resSentence').innerHTML = `
+            <b>${brand}</b> 프로젝트는 <b>${target}</b>을 핵심 타겟으로 하며, <b>"${sel.uspSub}"</b>라는 가치를 <b>${sel.visual}</b> 감각과 <b>${sel.tempo}</b>를 통해 전달하고자 합니다.
+        `;
+
         const rows = [
-            {l: '프로젝트 성격', v: document.getElementById('contentType').value},
-            {l: '핵심 타겟', v: `${document.getElementById('targetAge').value} / ${document.getElementById('targetJob').value}`},
+            {l: '제작 유형', v: document.getElementById('contentType').value},
+            {l: '전략 키워드(USP)', v: sel.uspSub},
+            {l: '캠페인 목표', v: sel.goalSub},
+            {l: '톤앤매너', v: `${sel.visual} 스타일에 ${sel.tempo}`},
             {l: '송출 플랫폼', v: pfs || '미지정'},
             {l: '제작 상세 사양', v: specs.map(s => `${s.d}${s.u} | ${s.r} | ${s.s} | ${s.q}개`).join('<br>')}
         ];
         document.getElementById('resBody').innerHTML = rows.map(r => `<tr><th>${r.l}</th><td>${r.v}</td></tr>`).join('');
+        window.scrollTo(0,0);
     }
 </script>
+
 </body>
 </html>
