@@ -3,62 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스마트 프로젝트 빌더 v6.9</title>
+    <title>스마트 프로젝트 빌더 v7.0</title>
     <style>
         :root {
-            --primary: #1e3a8a; 
-            --secondary: #334155;
-            --accent: #60a5fa;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --border: #e2e8f0;
-            --text: #0f172a;
+            --primary: #1e3a8a; --secondary: #334155; --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
         }
-
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 850px; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 15px 35px rgba(30, 58, 138, 0.08); }
+        .container { width: 100%; max-width: 900px; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 15px 35px rgba(30, 58, 138, 0.08); }
 
         .step-nav { display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 10px; }
         .nav-dot { padding: 8px 16px; background: #fff; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; color: #64748b; white-space: nowrap; }
         .nav-dot.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        .progress-container { width: 100%; height: 6px; background: #e2e8f0; border-radius: 10px; margin-bottom: 30px; }
-        .progress-bar { height: 100%; background: var(--primary); width: 12.5%; transition: 0.3s; }
-
+        .progress-bar { height: 6px; background: var(--primary); width: 12.5%; transition: 0.3s; border-radius: 10px; margin-bottom: 30px; }
         .step-section { display: none; }
         .step-section.active { display: block; }
 
         .q-label { font-size: 24px; font-weight: 900; margin-bottom: 20px; display: block; color: var(--primary); }
-        .item-label { font-weight: 800; font-size: 14px; margin-top: 20px; display: block; color: var(--secondary); border-left: 4px solid var(--primary); padding-left: 10px; margin-bottom: 10px; }
+        .item-label { font-weight: 800; font-size: 14px; margin-top: 25px; display: block; color: var(--secondary); border-left: 4px solid var(--primary); padding-left: 10px; margin-bottom: 12px; }
 
-        .category-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .cat-btn { padding: 18px; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; text-align: center; font-weight: 700; font-size: 14px; background: #fff; }
+        .category-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+        .cat-btn { padding: 18px; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; text-align: center; font-weight: 700; font-size: 14px; background: #fff; transition: 0.2s; }
         .cat-btn.selected { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
 
         select, input { width: 100%; padding: 15px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 15px; box-sizing: border-box; margin-top: 5px; }
 
         .spec-builder { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-top: 20px; }
-        .spec-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: end; }
-        @media (min-width: 600px) { .spec-row { grid-template-columns: 1fr 0.8fr 1fr 1.2fr 0.8fr 50px; } }
+        .spec-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; align-items: end; }
 
         .added-table-wrapper { overflow-x: auto; margin-top: 15px; border-radius: 10px; background: #fff; border: 1px solid var(--border); }
-        .added-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .added-table th { background: #f8fafc; padding: 10px; border-bottom: 2px solid var(--border); }
+        .added-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .added-table th { background: #f8fafc; padding: 12px; border-bottom: 2px solid var(--border); }
         .added-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
 
         .nav-btns { margin-top: 35px; display: flex; gap: 10px; }
         .btn-prev { background: #e2e8f0; color: #475569; width: 100px; }
         .btn-next { background: var(--primary); color: white; flex: 1; font-weight: 800; }
         .btn-jump { background: #10b981; color: white; width: 150px; font-weight: 800; }
-        button { padding: 18px; border-radius: 12px; border: none; cursor: pointer; font-size: 15px; transition: 0.2s; }
-        button:hover { filter: brightness(1.1); }
+        button { padding: 18px; border-radius: 12px; border: none; cursor: pointer; }
 
         #resultView { display: none; }
         .final-box { border: 2px solid var(--primary); padding: 30px; border-radius: 20px; background: #fff; }
         .res-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .res-table th { background: #f8fafc; width: 160px; text-align: left; padding: 15px; border: 1px solid var(--border); font-size: 13px; color: var(--secondary); }
-        .res-table td { padding: 15px; border: 1px solid var(--border); font-size: 15px; font-weight: 700; color: var(--primary); }
-
+        .res-table th { background: #f8fafc; width: 180px; text-align: left; padding: 15px; border: 1px solid var(--border); font-size: 13px; }
+        .res-table td { padding: 15px; border: 1px solid var(--border); font-size: 15px; font-weight: 700; color: var(--text); }
+        
         @media print { .no-print { display: none; } .container { box-shadow: none; padding: 0; } }
     </style>
 </head>
@@ -66,137 +55,110 @@
 
 <div class="container">
     <div class="step-nav no-print">
-        <div class="nav-dot active" onclick="goToStep(1)">1.기본 정보</div>
+        <div class="nav-dot active" onclick="goToStep(1)">1.프로젝트 정의</div>
         <div class="nav-dot" onclick="goToStep(2)">2.핵심 가치</div>
-        <div class="nav-dot" onclick="goToStep(3)">3.목적/목표</div>
-        <div class="nav-dot" onclick="goToStep(4)">4.타겟 설정</div>
+        <div class="nav-dot" onclick="goToStep(3)">3.목적 및 목표</div>
+        <div class="nav-dot" onclick="goToStep(4)">4.타겟 세분화</div>
         <div class="nav-dot" onclick="goToStep(5)">5.제작 무드</div>
-        <div class="nav-dot" onclick="goToStep(6)">6.송출 채널</div>
-        <div class="nav-dot" onclick="goToStep(7)">7.상세 사양</div>
+        <div class="nav-dot" onclick="goToStep(6)">6.배포 채널</div>
+        <div class="nav-dot" onclick="goToStep(7)">7.상세 규격</div>
     </div>
 
-    <div class="progress-container no-print"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-bar" id="progressBar"></div>
 
     <div id="formView">
         <div class="step-section active" data-step="1">
-            <span class="q-label">프로젝트의 명칭을 입력해 주세요</span>
-            <input type="text" id="brandName" placeholder="예: 브랜드 런칭 캠페인 '더 비전'">
-            <span class="item-label">어떤 종류의 프로젝트인가요?</span>
-            <select id="projectType">
-                <option value="브랜드 홍보 프로젝트">브랜드 홍보 (이미지 및 가치 중심)</option>
-                <option value="제품 세일즈 프로젝트">제품 세일즈 (기능 및 판매 유도)</option>
-                <option value="SNS 바이럴 프로젝트">SNS 바이럴 (확산 및 참여 중심)</option>
-                <option value="비즈니스 소개 프로젝트">기업/IR 소개 (신뢰 및 정보 전달)</option>
-            </select>
+            <span class="q-label">프로젝트의 명칭과 종류를 정의해 주세요</span>
+            <input type="text" id="brandName" placeholder="예: 2026 하반기 신제품 런칭 캠페인">
+            <span class="item-label">이 프로젝트는 무엇을 만드는 작업인가요?</span>
+            <div class="category-group" id="projectTypeGroup">
+                <div class="cat-btn" onclick="setSimpleSel('projectType', this)">영상 콘텐츠 (필름/CF)</div>
+                <div class="cat-btn" onclick="setSimpleSel('projectType', this)">그래픽 디자인 (BI/Key-Visual)</div>
+                <div class="cat-btn" onclick="setSimpleSel('projectType', this)">인쇄/출판물 (카탈로그/포스터)</div>
+                <div class="cat-btn" onclick="setSimpleSel('projectType', this)">온라인 마케팅 (배너/랜딩페이지)</div>
+                <div class="cat-btn" onclick="setSimpleSel('projectType', this)">공간/행사 기획 (전시/부스)</div>
+            </div>
         </div>
 
         <div class="step-section" data-step="2">
-            <span class="q-label">이 프로젝트의 핵심 가치는? (USP)</span>
-            <div class="category-group">
-                <div class="cat-btn" onclick="selectUSP('품질 및 기술', ['압도적인 기술력', '누구나 쓰기 쉬운 직관성', '전문가가 인정하는 품질 안정성'])">품질/기술</div>
-                <div class="cat-btn" onclick="selectUSP('디자인 및 감성', ['어디에나 조화로운 디자인', '최신 트렌드의 세련된 스타일', '고급 소재와 우수한 마감'])">디자인/감성</div>
-                <div class="cat-btn" onclick="selectUSP('경제성', ['합리적인 초기 도입 가격', '유지관리 비용의 혁신적 절감', '성능 대비 압도적인 경제성'])">가격/경제성</div>
-                <div class="cat-btn" onclick="selectUSP('신뢰와 안정', ['다중 보안 시스템', '신속하고 확실한 사후 관리', '오랜 업력이 증명하는 신뢰도'])">안정성/신뢰</div>
-                <div class="cat-btn" onclick="selectUSP('브랜드 철학', ['지속 가능한 환경 보호 가치', '진심을 담은 브랜드 스토리', '사용자 삶의 질 개선'])">브랜드/철학</div>
-                <div class="cat-btn" onclick="selectUSP('서비스 편의', ['365일 실시간 지원 시스템', '복잡한 과정 없는 간편함', '사용자 맞춤형 케어 서비스'])">편의/서비스</div>
+            <span class="q-label">이 프로젝트를 관통하는 핵심 가치는?</span>
+            <div class="category-group" id="uspGroup">
+                <div class="cat-btn" onclick="selectUSP('품질/기술력', ['독보적인 기술력', '직관적인 편의성', '압도적인 내구성'])">품질/기술</div>
+                <div class="cat-btn" onclick="selectUSP('디자인/감성', ['세련된 트렌디함', '하이엔드 미니멀리즘', '사용자 중심의 설계'])">디자인/감성</div>
+                <div class="cat-btn" onclick="selectUSP('경제성/가치', ['유지비용의 혁신적 절감', '합리적인 초기 투자비용', '가격 대비 압도적 성능'])">경제성/가치</div>
+                <div class="cat-btn" onclick="selectUSP('안정성/신뢰', ['사고 제로의 안전 설계', '철저한 사후 관리 시스템', '전문가 집단의 신뢰감'])">안정성/신뢰</div>
+                <div class="cat-btn" onclick="selectUSP('브랜드/철학', ['지속 가능한 환경 가치', '사람 중심의 기업 철학', '헤리티지와 전통'])">브랜드/철학</div>
             </div>
-            <select id="uspDetail" style="display:none;"></select>
-            <input type="text" id="uspCustom" placeholder="상기 항목 외 직접 입력">
+            <select id="uspDetail" style="display:none; margin-top:10px;"></select>
         </div>
 
         <div class="step-section" data-step="3">
-            <span class="q-label">어떤 결과를 만들고 싶나요?</span>
-            <span class="item-label">1. 제작 목적 (의도)</span>
-            <select id="goalPurpose" onchange="updateGoalOptions()">
-                <option value="">목적을 선택해 주세요</option>
-                <option value="우리 브랜드를 더 많이 알리고 싶어요">우리 브랜드를 더 많이 알리기</option>
-                <option value="실제 판매나 문의를 늘리고 싶어요">실제 판매 및 문의 늘리기</option>
-                <option value="브랜드 이미지를 고급스럽게 바꾸고 싶어요">브랜드 이미지 변신(리뉴얼)</option>
-                <option value="투자자나 파트너의 신뢰를 얻고 싶어요">투자 및 파트너십 신뢰 확보</option>
-            </select>
-            <span class="item-label">2. 세부 목표 (정량적/구체적 결과)</span>
-            <select id="goalDetail" disabled><option>먼저 목적을 선택하세요</option></select>
+            <span class="q-label">이 작업을 통해 얻고자 하는 것은?</span>
+            <span class="item-label">제작 목적 (왜 만드나요?)</span>
+            <div class="category-group" id="purposeGroup">
+                <div class="cat-btn" onclick="selectPurpose('인지도 제고', ['신규 고객에게 브랜드 각인', '검색량 증대 및 바이럴 유도'])">우리 브랜드 알리기</div>
+                <div class="cat-btn" onclick="selectPurpose('세일즈 강화', ['실제 구매 전환 및 매출 증대', '상담 신청 및 리드 고객 확보'])">판매 및 문의 늘리기</div>
+                <div class="cat-btn" onclick="selectPurpose('이미지 개선', ['브랜드 프리미엄화', '전문성 및 신뢰도 구축'])">브랜드 이미지 변신</div>
+                <div class="cat-btn" onclick="selectPurpose('정보 전달', ['신제품 기능의 완벽한 이해', 'IR/투자 유치를 위한 설득'])">정확한 정보 전달</div>
+            </div>
+            <span class="item-label">구체적 목표 (어떤 수치가 필요한가요?)</span>
+            <select id="goalDetail" disabled><option>목적을 먼저 선택하세요</option></select>
         </div>
 
         <div class="step-section" data-step="4">
-            <span class="q-label">타겟 페르소나를 구체화하세요</span>
-            <span class="item-label">연령 및 세대</span>
-            <select id="targetAge">
-                <option>2030 MZ세대 남녀 (트렌드 리더)</option>
-                <option>3040 사회 핵심 소비층 (구매력 보유)</option>
-                <option>5060 액티브 시니어 (가치 소비형)</option>
-                <option>의사 결정권자 (CEO/임원급)</option>
-            </select>
-            <span class="item-label">직업적 특성 및 위치</span>
-            <select id="targetJob">
-                <option>전문직 (의사, 변호사, IT전문가 등)</option>
-                <option>개인 사업자 및 매장 운영자 (CEO)</option>
-                <option>대기업/공공기관 사무직 직장인</option>
-                <option>창업 준비생 및 소규모 프리랜서</option>
-                <option>고소득 자산가 및 자산 관리층</option>
-            </select>
-            <span class="item-label">활동 지역 및 환경</span>
-            <select id="targetLoc">
-                <option>수도권 및 광역시 중심 도시 거주자</option>
-                <option>전국 단위 대중 시장 고객</option>
-                <option>특정 지역 기반 로컬 밀착 고객</option>
-                <option>글로벌 시장 및 해외 거주 한인</option>
-            </select>
-            <span class="item-label">주요 관심사 및 가치관</span>
-            <select id="targetLife">
-                <option>비즈니스 효율 및 업무 생산성 극대화</option>
-                <option>세무, 법률, 투자 등 자산 방어 및 증식</option>
-                <option>프리미엄 멤버십 및 독점적인 혜택 향유</option>
-                <option>가족의 건강과 자녀 교육 환경 개선</option>
-            </select>
+            <span class="q-label">타겟을 입체적으로 설정해 주세요</span>
+            <span class="item-label">의사결정권자 수준</span>
+            <div class="category-group" id="targetJobGroup">
+                <div class="cat-btn" onclick="setSimpleSel('targetJob', this)">기업 대표/임원(CEO)</div>
+                <div class="cat-btn" onclick="setSimpleSel('targetJob', this)">실무 책임자(팀장급)</div>
+                <div class="cat-btn" onclick="setSimpleSel('targetJob', this)">일반 직장인/사무직</div>
+                <div class="cat-btn" onclick="setSimpleSel('targetJob', this)">전문직(의사/변호사 등)</div>
+            </div>
+            <span class="item-label">핵심 활동 거점</span>
+            <div class="category-group" id="targetLocGroup">
+                <div class="cat-btn" onclick="setSimpleSel('targetLoc', this)">도심 오피스/상업 밀집지</div>
+                <div class="cat-btn" onclick="setSimpleSel('targetLoc', this)">조용한 주거/커뮤니티권</div>
+                <div class="cat-btn" onclick="setSimpleSel('targetLoc', this)">온라인/디지털 활동 중심</div>
+                <div class="cat-btn" onclick="setSimpleSel('targetLoc', this)">글로벌/해외 비즈니스권</div>
+            </div>
         </div>
 
         <div class="step-section" data-step="5">
-            <span class="q-label">시각적 분위기와 리듬</span>
+            <span class="q-label">표현하고 싶은 느낌을 선택하세요</span>
             <span class="item-label">비주얼 스타일</span>
             <div class="category-group" id="visualGroup">
-                <div class="cat-btn" onclick="setVisual(this, '시네마틱하고 웅장한')">시네마틱</div>
-                <div class="cat-btn" onclick="setVisual(this, '깔끔하고 정돈된')">심플/모던</div>
-                <div class="cat-btn" onclick="setVisual(this, '톡톡 튀고 화려한')">팝/비비드</div>
-                <div class="cat-btn" onclick="setVisual(this, '편안하고 따뜻한')">감성적</div>
-            </div>
-            <span class="item-label">편집 호흡</span>
-            <div class="category-group" id="tempoGroup">
-                <div class="cat-btn" onclick="setTempo(this, '빠르고 박진감 있는')">빠른 템포</div>
-                <div class="cat-btn" onclick="setTempo(this, '정보 전달이 명확한')">안정적 템포</div>
-                <div class="cat-btn" onclick="setTempo(this, '여운이 깊고 진중한')">진중한 템포</div>
+                <div class="cat-btn" onclick="setSimpleSel('visual', this)">시네마틱/웅장함</div>
+                <div class="cat-btn" onclick="setSimpleSel('visual', this)">미니멀/심플함</div>
+                <div class="cat-btn" onclick="setSimpleSel('visual', this)">박진감/에너지</div>
+                <div class="cat-btn" onclick="setSimpleSel('visual', this)">따스함/서정적</div>
             </div>
         </div>
 
         <div class="step-section" data-step="6">
-            <span class="q-label">배포 채널</span>
+            <span class="q-label">주요 배포 채널을 선택하세요 (중복 가능)</span>
             <div class="category-group" id="pfGroup">
-                <div class="cat-btn" onclick="this.classList.toggle('selected')">유튜브</div>
-                <div class="cat-btn" onclick="this.classList.toggle('selected')">인스타그램 (릴스)</div>
-                <div class="cat-btn" onclick="this.classList.toggle('selected')">틱톡 / 쇼츠</div>
-                <div class="cat-btn" onclick="this.classList.toggle('selected')">TV 광고</div>
-                <div class="cat-btn" onclick="this.classList.toggle('selected')">매장 전광판</div>
+                <div class="cat-btn" onclick="this.classList.toggle('selected')">유튜브 (Full HD/4K)</div>
+                <div class="cat-btn" onclick="this.classList.toggle('selected')">SNS (릴스/쇼츠/피드)</div>
+                <div class="cat-btn" onclick="this.classList.toggle('selected')">공중파/케이블 TV 광고</div>
+                <div class="cat-btn" onclick="this.classList.toggle('selected')">현장 대형 LED/키오스크</div>
+                <div class="cat-btn" onclick="this.classList.toggle('selected')">웹사이트/랜딩페이지</div>
             </div>
         </div>
 
         <div class="step-section" data-step="7">
-            <span class="q-label">제작 규격</span>
+            <span class="q-label">제작 상세 규격을 정의하세요</span>
             <div class="spec-builder">
                 <div class="spec-row">
                     <div><label style="font-size:10px;">분량</label><input type="number" id="sDur" placeholder="30"></div>
-                    <div><label style="font-size:10px;">단위</label><select id="sUnit"><option>초</option><option>분</option></select></div>
+                    <div><label style="font-size:10px;">단위</label><select id="sUnit"><option>초</option><option>분</option><option>페이지</option></select></div>
+                    <div><label style="font-size:10px;">프레임(fps)</label><select id="sFps"><option>24 fps</option><option>30 fps</option><option>60 fps</option><option>해당없음</option></select></div>
                     <div><label style="font-size:10px;">비율</label><select id="sRatio"><option>16:9 가로</option><option>9:16 세로</option><option>1:1 정방</option></select></div>
-                    <div><label style="font-size:10px;">해상도</label><select id="sRes">
-                        <option value="1080p (표준)">1080p</option>
-                        <option value="4K (초고화질)">4K</option>
-                        <option value="720p (일반)">720p</option>
-                    </select></div>
-                    <div><label style="font-size:10px;">수량</label><input type="number" id="sQty" value="1"></div>
-                    <button type="button" onclick="addSpec()" style="background:var(--primary); color:white; height:45px;">+</button>
+                    <div><label style="font-size:10px;">해상도</label><select id="sRes"><option>1080p</option><option>4K</option><option>300dpi</option></select></div>
+                    <button type="button" onclick="addSpec()" style="background:var(--primary); color:white; padding:12px;">추가</button>
                 </div>
                 <div class="added-table-wrapper" id="specTable" style="display:none;">
                     <table class="added-table">
-                        <thead><tr><th>분량</th><th>비율</th><th>해상도</th><th>수량</th><th>삭제</th></tr></thead>
+                        <thead><tr><th>분량/단위</th><th>프레임</th><th>비율</th><th>해상도</th><th>삭제</th></tr></thead>
                         <tbody id="specBody"></tbody>
                     </table>
                 </div>
@@ -205,56 +167,61 @@
 
         <div class="nav-btns no-print">
             <button class="btn-prev" id="prevBtn" onclick="moveStep(-1)">이전</button>
-            <button class="btn-next" id="nextBtn" onclick="moveStep(1)">다음 단계</button>
-            <button class="btn-jump" id="jumpBtn" onclick="showResult()" style="display:none;">기획서 생성</button>
+            <button class="btn-next" onclick="moveStep(1)">다음 단계</button>
+            <button class="btn-jump" id="jumpBtn" onclick="showResult()" style="display:none;">기획서 요약보기</button>
         </div>
     </div>
 
     <div id="resultView">
-        <header><h1 style="color:var(--primary); font-size:28px;">프로젝트 전략 기획서</h1></header>
+        <header><h1 style="color:var(--primary); font-size:26px;">프로젝트 전략 기획서 요약</h1></header>
         <div class="final-box">
-            <div id="resSentence" style="font-size:19px; line-height:1.7; margin-bottom:25px; border-bottom:2.5px solid var(--primary); padding-bottom:20px;"></div>
-            
-            <h3 style="font-size:16px; color:var(--primary);">[1. 캠페인 핵심 요약]</h3>
-            <table class="res-table" id="resBodySummary"></table>
+            <h3 style="font-size:16px; color:var(--primary); margin:0 0 15px 0;">[1. 프로젝트 기본 정의]</h3>
+            <table class="res-table" id="resTable1"></table>
 
-            <h3 style="font-size:16px; color:var(--primary); margin-top:30px;">[2. 제작 상세 사양]</h3>
-            <table class="res-table" id="resBodySpecs"></table>
+            <h3 style="font-size:16px; color:var(--primary); margin:25px 0 15px 0;">[2. 기획 전략 및 목표]</h3>
+            <table class="res-table" id="resTable2"></table>
+
+            <h3 style="font-size:16px; color:var(--primary); margin:25px 0 15px 0;">[3. 제작 상세 규격]</h3>
+            <table class="res-table" id="resTable3"></table>
         </div>
         <div class="nav-btns no-print">
-            <button class="btn-next" onclick="window.print()">저장 및 인쇄</button>
-            <button class="btn-prev" style="width:auto; padding:0 30px;" onclick="goToStep(1)">내용 수정</button>
+            <button class="btn-next" onclick="window.print()">PDF 저장 및 인쇄</button>
+            <button class="btn-prev" onclick="goToStep(1)">처음부터 수정</button>
         </div>
     </div>
 </div>
 
 <script>
-    let step = 1;
-    let specs = [];
-    let sel = { visual: '', tempo: '', uspCat: '', uspSub: '', goalSub: '' };
+    let step = 1; let specs = [];
+    let sel = { projectType: '', uspCat: '', uspSub: '', purpose: '', goal: '', targetJob: '', targetLoc: '', visual: '' };
 
-    // 목적-목표 매핑 알고리즘 (추상 -> 정량)
-    const goalMap = {
-        "우리 브랜드를 더 많이 알리고 싶어요": ["유튜브 조회수 100만 회 달성", "포털 브랜드 검색량 2배 증가", "신규 SNS 팔로워 5,000명 확보"],
-        "실제 판매나 문의를 늘리고 싶어요": ["전용 페이지 문의 상담 300건 확보", "광고 집행 기간 내 매출 20% 증가", "오프라인 매장 방문 예약 100건 달성"],
-        "브랜드 이미지를 고급스럽게 바꾸고 싶어요": ["전문성 지수 조사 15% 향상", "프리미엄 제품군 판매 비중 10% 확대", "고객 호감도 및 신뢰도 점수 상향"],
-        "투자자나 파트너의 신뢰를 얻고 싶어요": ["파트너 제안 미팅 5건 성사", "IR 영상 배포 후 투자 확약 확보", "업계 리더 그룹 내 인지도 확보"]
-    };
-
-    // 문장 자연스럽게 변환하는 알고리즘
-    function getNaturalPurpose(p) {
-        if(!p) return "";
-        return p.replace("싶어요", "하는 것").replace("늘리고", "늘리는 것").replace("알리고", "알리는 것").replace("얻고", "얻는 것").replace("바꾸고", "바꾸는 것");
+    function setSimpleSel(key, btn) {
+        sel[key] = btn.innerText;
+        btn.parentElement.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
     }
 
-    function updateGoalOptions() {
-        const p = document.getElementById('goalPurpose').value;
-        const el = document.getElementById('goalDetail');
-        if(!p) { el.disabled = true; return; }
-        el.disabled = false;
+    function selectUSP(cat, subs) {
+        sel.uspCat = cat;
+        const el = document.getElementById('uspDetail'); el.style.display = 'block';
+        el.innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('');
+        sel.uspSub = subs[0]; el.onchange = (e) => sel.uspSub = e.target.value;
+        setSimpleSel('usp', document.querySelector(`#uspGroup .cat-btn:nth-child(${['품질/기술력','디자인/감성','경제성/가치','안정성/신뢰','브랜드/철학'].indexOf(cat)+1})`));
+    }
+
+    const goalMap = {
+        '우리 브랜드 알리기': ['유튜브 조회수 100만 회 달성', '포털 키워드 검색량 30% 증가'],
+        '판매 및 문의 늘리기': ['상담 문의 월 50건 확보', '직접 구매 전환율 5% 증가'],
+        '브랜드 이미지 변신': ['프리미엄 인지도 설문 20% 향상', '전문직 타겟 선호도 1위 확보'],
+        '정확한 정보 전달': ['콘텐츠 완독률 70% 달성', 'IR 미팅 성공률 10% 개선']
+    };
+
+    function selectPurpose(p, subs) {
+        sel.purpose = p;
+        const el = document.getElementById('goalDetail'); el.disabled = false;
         el.innerHTML = goalMap[p].map(g => `<option value="${g}">${g}</option>`).join('');
-        sel.goalSub = goalMap[p][0];
-        el.onchange = (e) => sel.goalSub = e.target.value;
+        sel.goal = goalMap[p][0]; el.onchange = (e) => sel.goal = e.target.value;
+        setSimpleSel('purpose', document.querySelector(`#purposeGroup .cat-btn:nth-child(${['인지도 제고','세일즈 강화','이미지 개선','정확한 정보 전달'].indexOf(p)+1})`));
     }
 
     function goToStep(n) {
@@ -268,7 +235,7 @@
     }
 
     function moveStep(n) {
-        if(n === 1 && step === 1 && !document.getElementById('brandName').value) return alert("프로젝트 명칭을 입력해 주세요.");
+        if(n === 1 && step === 1 && !document.getElementById('brandName').value) return alert("프로젝트 이름을 입력하세요.");
         if(step + n > 7) return showResult();
         goToStep(step + n);
     }
@@ -279,66 +246,38 @@
         document.getElementById('prevBtn').style.visibility = (step === 1) ? 'hidden' : 'visible';
     }
 
-    function selectUSP(cat, subs) { 
-        sel.uspCat = cat;
-        const el = document.getElementById('uspDetail'); el.style.display = 'block';
-        el.innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('');
-        sel.uspSub = subs[0]; el.onchange = (e) => sel.uspSub = e.target.value;
-        highlightBtn('[data-step="2"]', cat);
-    }
-
-    function setVisual(btn, val) { sel.visual = val; highlightBtn('#visualGroup', btn.innerText); }
-    function setTempo(btn, val) { sel.tempo = val; highlightBtn('#tempoGroup', btn.innerText); }
-    function highlightBtn(parent, text) {
-        document.querySelector(parent).querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('selected', b.innerText === text));
-    }
-
     function addSpec() {
         const d = document.getElementById('sDur').value;
         if(!d) return alert("분량을 입력하세요");
-        specs.push({ d, u: document.getElementById('sUnit').value, r: document.getElementById('sRatio').value, s: document.getElementById('sRes').value, q: document.getElementById('sQty').value });
+        specs.push({ d, u: document.getElementById('sUnit').value, f: document.getElementById('sFps').value, r: document.getElementById('sRatio').value, s: document.getElementById('sRes').value });
         renderSpecs();
-        document.getElementById('sDur').value = '';
     }
 
     function renderSpecs() {
         document.getElementById('specTable').style.display = 'block';
         document.getElementById('specBody').innerHTML = specs.map((x, i) => `
-            <tr>
-                <td><input type="number" style="width:40px" value="${x.d}" onchange="specs[${i}].d=this.value">${x.u}</td>
-                <td>${x.r}</td><td>${x.s.split(' ')[0]}</td><td>${x.q}개</td>
-                <td><span onclick="specs.splice(${i},1);renderSpecs();" style="cursor:pointer;color:red">×</span></td>
-            </tr>
+            <tr><td>${x.d}${x.u}</td><td>${x.f}</td><td>${x.r}</td><td>${x.s}</td><td onclick="specs.splice(${i},1);renderSpecs();" style="color:red;cursor:pointer;">×</td></tr>
         `).join('');
     }
 
     function showResult() {
         document.getElementById('formView').style.display = 'none';
         document.getElementById('resultView').style.display = 'block';
-        const brand = document.getElementById('brandName').value;
-        const type = document.getElementById('projectType').value;
-        const purpose = getNaturalPurpose(document.getElementById('goalPurpose').value);
-        const pfs = Array.from(document.querySelectorAll('#pfGroup .cat-btn.selected')).map(b => b.innerText).join(', ');
         
-        // 최종 기획 요약 문장 알고리즘
-        document.getElementById('resSentence').innerHTML = `
-            <b>${brand}</b>은(는) <b>"${sel.uspSub}"</b> 가치를 바탕으로 <b>${purpose}</b> 것을 목표로 합니다.
+        document.getElementById('resTable1').innerHTML = `
+            <tr><th>프로젝트명</th><td>${document.getElementById('brandName').value}</td></tr>
+            <tr><th>작업 성격</th><td>${sel.projectType}</td></tr>
         `;
-
-        const summaryRows = [
-            {l: '제품/브랜드명', v: brand},
-            {l: '프로젝트 종류', v: type},
-            {l: '핵심 가치 (USP)', v: `${sel.uspCat} : ${sel.uspSub} ${document.getElementById('uspCustom').value ? '('+document.getElementById('uspCustom').value+')' : ''}`},
-            {l: '기획 목적', v: document.getElementById('goalPurpose').value},
-            {l: '정량적 목표', v: sel.goalSub},
-            {l: '타겟 고객층', v: `${document.getElementById('targetAge').value} / ${document.getElementById('targetJob').value}<br>${document.getElementById('targetLoc').value} / ${document.getElementById('targetLife').value}`},
-            {l: '제작 톤앤매너', v: `${sel.visual} 스타일, ${sel.tempo}`},
-            {l: '송출 플랫폼', v: pfs || '미지정'}
-        ];
-        
-        document.getElementById('resBodySummary').innerHTML = summaryRows.map(r => `<tr><th>${r.l}</th><td>${r.v}</td></tr>`).join('');
-        document.getElementById('resBodySpecs').innerHTML = specs.map(s => `<tr><th>${s.d}${s.u} 규격</th><td>${s.r} | ${s.s} | ${s.q}편</td></tr>`).join('');
-        if(specs.length === 0) document.getElementById('resBodySpecs').innerHTML = '<tr><td colspan="2">등록된 사양이 없습니다.</td></tr>';
+        document.getElementById('resTable2').innerHTML = `
+            <tr><th>핵심 가치 (USP)</th><td>${sel.uspSub}</td></tr>
+            <tr><th>기획 의도/목적</th><td>${sel.purpose}</td></tr>
+            <tr><th>성과 지표/목표</th><td>${sel.goal}</td></tr>
+            <tr><th>타겟 페르소나</th><td>${sel.targetJob} | ${sel.targetLoc}</td></tr>
+            <tr><th>제작 톤앤매너</th><td>${sel.visual}</td></tr>
+        `;
+        document.getElementById('resTable3').innerHTML = specs.map(s => `
+            <tr><th>${s.d}${s.u} 규격</th><td>${s.f} / ${s.r} / ${s.s}</td></tr>
+        `).join('') || '<tr><td colspan="2">등록된 사양이 없습니다.</td></tr>';
         window.scrollTo(0,0);
     }
 </script>
