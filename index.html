@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트 프로젝트 빌더 v5.0</title>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --accent: #3b82f6;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #1e293b;
+        }
+
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 750px; margin: 0 auto; background: var(--card); padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; }
+
+        /* 진행 바 */
+        .progress-container { width: 100%; height: 6px; background: #e2e8f0; border-radius: 10px; margin-bottom: 40px; }
+        .progress-bar { height: 100%; background: var(--primary); border-radius: 10px; width: 20%; transition: 0.3s; }
+        .step-count { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 10px; display: block; }
+
+        header { margin-bottom: 30px; }
+        h1 { font-size: 24px; margin: 0; letter-spacing: -1px; }
+
+        .step-section { display: none; }
+        .step-section.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .q-label { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: block; }
+
+        /* 트리형 선택 스타일 */
+        .category-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .cat-btn { padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; text-align: center; font-weight: 600; transition: 0.2s; }
+        .cat-btn.selected { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+
+        select, input, textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 15px; box-sizing: border-box; margin-top: 10px; }
+
+        /* 수량/분량 복구 */
+        .spec-builder { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-top: 15px; }
+        .spec-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 60px; gap: 8px; margin-bottom: 10px; }
+        .spec-row select, .spec-row input { padding: 10px; font-size: 13px; margin: 0; }
+        .added-table { width: 100%; border-collapse: collapse; background: white; margin-top: 10px; font-size: 13px; }
+        .added-table th, .added-table td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; }
+
+        .nav-btns { margin-top: 40px; display: flex; gap: 10px; }
+        .btn-prev { background: #e2e8f0; color: #475569; width: 100px; }
+        .btn-next { background: var(--primary); color: white; flex: 1; }
+        button { padding: 16px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; }
+
+        /* 결과 화면 */
+        #resultView { display: none; }
+        .final-box { border: 2px solid var(--primary); padding: 30px; border-radius: 20px; }
+        .final-sentence { font-size: 19px; line-height: 1.8; margin-bottom: 25px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
+        .final-sentence b { color: var(--primary); background: #eff6ff; padding: 0 4px; }
+        .res-table { width: 100%; border-collapse: collapse; }
+        .res-table th, .res-table td { padding: 12px; border: 1px solid #e2e8f0; text-align: left; }
+        .res-table th { background: #f8fafc; width: 160px; }
+
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <span class="step-count" id="stepIndicator">STEP 1 / 5</span>
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+    <div id="formView">
+        <div class="step-section active" data-step="1">
+            <span class="q-label">프로젝트의 이름을 알려주세요</span>
+            <input type="text" id="brandName" placeholder="제품명이나 프로젝트명을 입력하세요">
+            <div style="margin-top:20px;">
+                <label>콘텐츠 성격</label>
+                <select id="contentType">
+                    <option value="브랜드 홍보 영상">비즈니스 홍보 영상</option>
+                    <option value="디지털 광고 소재">디지털 광고용 이미지/영상</option>
+                    <option value="IR/투자 유치 자료">투자 유치용(IR) 전문 자료</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="step-section" data-step="2">
+            <span class="q-label">우리 브랜드의 가장 큰 매력은? (USP)</span>
+            <div class="category-group">
+                <div class="cat-btn" onclick="selectUSP('경제성', ['합리적인 가격', '압도적인 가성비', '유지비 절감'])">경제성</div>
+                <div class="cat-btn" onclick="selectUSP('기술력', ['독보적인 기술', '특허 보유', '오랜 노하우'])">기술력</div>
+                <div class="cat-btn" onclick="selectUSP('디자인', ['세련된 외관', '인체공학적 설계', '감성적인 무드'])">디자인</div>
+                <div class="cat-btn" onclick="selectUSP('서비스', ['빠른 고객 대응', '평생 A/S', '친절한 가이드'])">서비스</div>
+            </div>
+            <select id="uspDetail" style="display:none;"></select>
+            <input type="text" id="uspCustom" placeholder="직접 입력도 가능합니다" style="margin-top:10px;">
+        </div>
+
+        <div class="step-section" data-step="3">
+            <span class="q-label">제작 목적을 고르면 목표가 추천됩니다</span>
+            <div class="category-group">
+                <div class="cat-btn" onclick="selectGoal('신규 런칭', ['시장 점유율 확보', '인지도 확산', '신규 회원가입 증대'])">신규 런칭</div>
+                <div class="cat-btn" onclick="selectGoal('이미지 쇄신', ['브랜드 신뢰도 회복', '젊은 이미지 구축', '팬덤 형성'])">이미지 쇄신</div>
+                <div class="cat-btn" onclick="selectGoal('매출 증대', ['구매 전환율 향상', '객단가 상승', '재구매 유도'])">매출 증대</div>
+            </div>
+            <select id="goalDetail" style="display:none;"></select>
+        </div>
+
+        <div class="step-section" data-step="4">
+            <span class="q-label">누구에게 보여줄까요? (타겟)</span>
+            <div class="category-group">
+                <div class="cat-btn" onclick="selectTarget('연령/세대', ['1020 알파/Z세대', '2030 사회초년생', '3040 핵심 소비층', '5060 액티브 시니어'])">세대별</div>
+                <div class="cat-btn" onclick="selectTarget('직업/관심사', ['직장인/전문직', '학생/취준생', '주부/육아맘', '자영업자'])">라이프스타일</div>
+            </div>
+            <select id="targetDetail" style="display:none;"></select>
+        </div>
+
+        <div class="step-section" data-step="5">
+            <span class="q-label">송출 플랫폼과 세부 규격입니다</span>
+            <div class="platform-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-bottom:20px;">
+                <label><input type="checkbox" name="pf" value="유튜브"> 유튜브</label>
+                <label><input type="checkbox" name="pf" value="인스타"> 인스타</label>
+                <label><input type="checkbox" name="pf" value="틱톡"> 틱톡</label>
+            </div>
+            <div class="spec-builder">
+                <div class="spec-row">
+                    <input type="text" id="sDur" placeholder="분량">
+                    <input type="number" id="sQty" placeholder="수량">
+                    <select id="sRatio">
+                        <option value="16:9 (가로형/TV)">16:9 (가로형)</option>
+                        <option value="9:16 (세로형/숏폼)">9:16 (세로형)</option>
+                    </select>
+                    <select id="sRes"><option value="4K">4K</option><option value="FHD">FHD</option></select>
+                    <button type="button" onclick="addSpec()" style="background:var(--primary); color:white; border-radius:8px;">+</button>
+                </div>
+                <table class="added-table" id="specTable" style="display:none;">
+                    <thead><tr><th>분량</th><th>수량</th><th>비율</th><th>해상도</th><th>-</th></tr></thead>
+                    <tbody id="specBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="nav-btns">
+            <button class="btn-prev" id="prevBtn" style="visibility:hidden;" onclick="moveStep(-1)">이전</button>
+            <button class="btn-next" id="nextBtn" onclick="moveStep(1)">다음으로</button>
+        </div>
+    </div>
+
+    <div id="resultView">
+        <header><h1>프로젝트 전략 정의서</h1></header>
+        <div class="final-box">
+            <div class="final-sentence" id="resSentence"></div>
+            <table class="res-table" id="resTable"></table>
+        </div>
+        <div class="nav-btns no-print">
+            <button class="btn-next" onclick="window.print()">PDF 저장</button>
+            <button class="btn-prev" onclick="location.reload()">수정</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let step = 1;
+    let specs = [];
+    let selectedData = { uspCat: '', uspSub: '', goalCat: '', goalSub: '', targetCat: '', targetSub: '' };
+
+    function moveStep(n) {
+        if(n === 1 && step === 1 && !document.getElementById('brandName').value) return alert("이름을 써주세요!");
+        
+        document.querySelector(`[data-step="${step}"]`).classList.remove('active');
+        step += n;
+        
+        if(step > 5) return showResult();
+
+        document.querySelector(`[data-step="${step}"]`).classList.add('active');
+        document.getElementById('stepIndicator').innerText = `STEP ${step} / 5`;
+        document.getElementById('progressBar').style.width = (step * 20) + '%';
+        document.getElementById('prevBtn').style.visibility = step === 1 ? 'hidden' : 'visible';
+        document.getElementById('nextBtn').innerText = step === 5 ? '완성하기' : '다음으로';
+    }
+
+    function selectUSP(cat, subs) {
+        selectedData.uspCat = cat;
+        renderSub('uspDetail', subs, (v) => selectedData.uspSub = v);
+        highlightBtn(0, cat);
+    }
+
+    function selectGoal(cat, subs) {
+        selectedData.goalCat = cat;
+        renderSub('goalDetail', subs, (v) => selectedData.goalSub = v);
+        highlightBtn(1, cat);
+    }
+
+    function selectTarget(cat, subs) {
+        selectedData.targetCat = cat;
+        renderSub('targetDetail', subs, (v) => selectedData.targetSub = v);
+        highlightBtn(2, cat);
+    }
+
+    function renderSub(id, list, callback) {
+        const el = document.getElementById(id);
+        el.style.display = 'block';
+        el.innerHTML = list.map(i => `<option value="${i}">${i}</option>`).join('');
+        callback(list[0]);
+        el.onchange = (e) => callback(e.target.value);
+    }
+
+    function highlightBtn(stepIdx, text) {
+        const btns = document.querySelectorAll('.step-section')[stepIdx+1].querySelectorAll('.cat-btn');
+        btns.forEach(b => b.classList.toggle('selected', b.innerText === text));
+    }
+
+    function addSpec() {
+        const d = document.getElementById('sDur').value;
+        const q = document.getElementById('sQty').value;
+        const r = document.getElementById('sRatio').value;
+        const s = document.getElementById('sRes').value;
+        if(!d || !q) return;
+        specs.push({d, q, r, s});
+        renderSpecList();
+        document.getElementById('sDur').value=''; document.getElementById('sQty').value='';
+    }
+
+    function renderSpecList() {
+        document.getElementById('specTable').style.display = 'table';
+        document.getElementById('specBody').innerHTML = specs.map((x, i) => `
+            <tr><td>${x.d}</td><td>${x.q}개</td><td>${x.r}</td><td>${x.s}</td><td onclick="specs.splice(${i},1);renderSpecList();" style="color:red;cursor:pointer;">×</td></tr>
+        `).join('');
+    }
+
+    function showResult() {
+        document.getElementById('formView').style.display = 'none';
+        document.getElementById('resultView').style.display = 'block';
+        
+        const brand = document.getElementById('brandName').value;
+        const usp = document.getElementById('uspCustom').value || selectedData.uspSub;
+        const platforms = Array.from(document.querySelectorAll('input[name="pf"]:checked')).map(p => p.value).join(', ');
+
+        document.getElementById('resSentence').innerHTML = `
+            <b>${brand}</b>은(는) <b>${selectedData.targetSub}</b>을(를) 대상으로 <b>"${usp}"</b>라는 가치를 전달하고자 합니다. 
+            이번 프로젝트를 통해 <b>${selectedData.goalSub}</b> 성과를 내는 것이 최종 목표입니다.
+        `;
+
+        const finalFields = [
+            {l: '콘텐츠 성격', v: document.getElementById('contentType').value},
+            {l: '송출 플랫폼', v: platforms || '미선택'},
+            {l: '제작 상세', v: specs.map(s => `${s.d} / ${s.q}개 (${s.r})`).join('<br>') || '규격 없음'}
+        ];
+
+        document.getElementById('resTable').innerHTML = finalFields.map(f => `<tr><th>${f.l}</th><td>${f.v}</td></tr>`).join('');
+    }
+</script>
+</body>
+</html>
